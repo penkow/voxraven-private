@@ -58,6 +58,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return jwt.jwt;
   };
 
+  const get_user = async () => {
+    try {
+      const user = await account.get();
+      return user;
+    } catch (error) {
+      return null;
+    }
+  };
+
   const logout = async () => {
     setisLoading(true);
     await account.deleteSession("current");
@@ -74,8 +83,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       try {
         const user = await account.get();
         setUser(user);
-      } catch (error) {
-      }
+      } catch (error) {}
       setisLoading(false);
     };
     fetchUser();

@@ -129,7 +129,7 @@ export default function ChatDemo() {
       className="w-full rounded-lg border"
     >
       <ResizablePanel defaultSize={80}>
-        <div className="flex h-[calc(100vh-100px)] p-4 col-span-2 border-r border-slate-200">
+        <div className="flex h-[calc(100vh-100px)] p-4 col-span-2 border-slate-200">
           <Chat
             className="grow"
             messages={messages}
@@ -150,12 +150,12 @@ export default function ChatDemo() {
           />
         </div>
       </ResizablePanel>
-      <ResizableHandle withHandle />
+      {/* <ResizableHandle withHandle />
       <ResizablePanel defaultSize={20}>
         <div className="h-[calc(100vh-100px)] overflow-y-auto p-4">
           <p>{toolOutput}</p>
         </div>
-      </ResizablePanel>
+      </ResizablePanel> */}
     </ResizablePanelGroup>
   );
 }

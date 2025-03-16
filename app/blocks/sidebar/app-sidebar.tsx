@@ -3,7 +3,7 @@
 import * as React from "react";
 import {
   FileStack,
-  Home,
+  MessageSquareMore,
   Bird,
   LifeBuoy,
   Send,
@@ -34,17 +34,23 @@ const data = {
   },
   navMain: [
     {
+      title: "AI Content Creator",
+      url: "/chat",
+      icon: MessageSquareMore,
+      isActive: true,
+    },
+    {
       title: "Agent Builder",
       url: "/builder",
       icon: Construction,
       isActive: true,
     },
-    {
-      title: "Settings",
-      url: "/settings",
-      icon: Settings2,
-      isActive: false
-    },
+    // {
+    //   title: "Settings",
+    //   url: "/settings",
+    //   icon: Settings2,
+    //   isActive: false
+    // },
   ],
   navSecondary: [
     {

@@ -10,7 +10,7 @@ import { Toaster } from "@/components/ui/sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "VoxRaven - AI Sales Assistant",
+  title: "VoxRaven - Content Creator AI Agents",
   description: "Early Alpha",
 };
 
