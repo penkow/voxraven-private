@@ -27,8 +27,11 @@ export default function ChatDemo() {
     setInput(e.target.value);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async (
+    event?: { preventDefault?: (() => void) | undefined } | undefined,
+    options?: { experimental_attachments?: FileList | undefined } | undefined
+  ) => {
+    event?.preventDefault?.();
     setParts([]);
     setIsLoading(true);
     const userMessage = input;
@@ -77,7 +80,7 @@ export default function ChatDemo() {
     console.log("stop");
   };
 
-  const append = (message: Message) => {
+  const append = (message: { role: "user"; content: string }) => {
     console.log("append", message);
   };
 

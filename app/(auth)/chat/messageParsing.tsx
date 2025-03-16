@@ -32,7 +32,7 @@ export const parse_chunk = (chunk: ReceivedChunk) => {
     const chunk_kwargs = chunk.kwargs as AIMessageChunk;
     const content = chunk_kwargs.content;
     const tool_calls = chunk_kwargs.tool_calls;
-    const tool_call_chunks = chunk_kwargs.tool_call_chunks;
+    // const tool_call_chunks = chunk_kwargs.tool_call_chunks;
 
     if (tool_calls.length > 0) {
       const tool_name = tool_calls[0].name;
@@ -67,7 +67,7 @@ export const parse_chunk = (chunk: ReceivedChunk) => {
 
 export const handleChunkParts = (chunk: string) => {
   const parts = chunk.split("\n").filter(Boolean);
-  let parsedParts: string[] = [];
+  const parsedParts: string[] = [];
 
   // Process each part
   for (const part of parts) {

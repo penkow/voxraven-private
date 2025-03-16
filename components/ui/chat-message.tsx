@@ -121,6 +121,9 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   toolViewCallback,
   isLoading = false,
 }) => {
+  const [viewToolOutput, setViewToolOutput] = useState(false);
+  const [toolOutput, setToolOutput] = useState("");
+
   const files = useMemo(() => {
     return experimental_attachments?.map((attachment) => {
       const dataArray = dataUrlToUint8Array(attachment.url);
@@ -140,8 +143,6 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
     minute: "2-digit",
   });
 
-  const [viewToolOutput, setViewToolOutput] = useState(false);
-  const [toolOutput, setToolOutput] = useState("");
   const findToolCallLocations = (input: string): number[][] => {
     const regex = /<ToolCall>(.*?)<\/ToolCall>/g;
     let match;
@@ -154,14 +155,14 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
     return locations;
   };
 
-  const extractSingleToolCall = (input: string): string | null => {
+  const extractSingleToolCall = (input: string): any | null => {
     const regex = /<ToolCall>(.*?)<\/ToolCall>/;
     const match = input.match(regex);
 
     return match ? JSON.parse(match[1]) : null;
   };
 
-  const extractSingleToolFinish = (input: string): string | null => {
+  const extractSingleToolFinish = (input: string): any | null => {
     const regex = /<ToolFinish>(.*?)<\/ToolFinish>/;
     const match = input.match(regex);
 
@@ -221,10 +222,10 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
     // console.log(cleanContent);
     // This regex matches both <ToolFinish>...</ToolFinish> and <ToolCall>...</ToolCall>
     // It captures the tag type in group 1 and the inner content in group 2.
-    const regex = /<(ToolFinish|ToolCall)>(.*?)<\/\1>/gs;
+    const regex = /<(ToolFinish|ToolCall)>(.*?)<\/\1>/g;
 
-    const toolCalls = [];
-    const toolFinishes = [];
+    const toolCalls: any[] = [];
+    const toolFinishes: any[] = [];
     let parts: string[] = [];
     let lastIndex = 0;
     let match: RegExpExecArray | null;
@@ -289,7 +290,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
 
       <div className={cn(chatBubbleVariants({ isUser, animation }), className)}>
         <div className="space-y-2">
-          {prepareContent(content).map((lines, index) => {
+          {prepareContent(content).map((lines: string | any, index) => {
             return typeof lines === "string" ? (
               <MarkdownRenderer key={index}>{lines}</MarkdownRenderer>
             ) : (
