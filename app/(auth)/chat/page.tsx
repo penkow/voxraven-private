@@ -85,7 +85,7 @@ export default function ChatDemo() {
   };
 
   const fetchStream = async (userMessage: string, jwt: string) => {
-    const response = await fetch("http://localhost:8001/stream", {
+    const response = await fetch("http://localhost:8001/ideator", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

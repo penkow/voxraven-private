@@ -18,6 +18,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
+import { useEffect, useState } from "react";
 
 export default function LayoutSelector({
   children,
@@ -27,6 +28,30 @@ export default function LayoutSelector({
   const pathname: string = usePathname();
   const isAuthPage =
     pathname === "/login" || pathname === "/logout" || pathname === "/register";
+
+  const [breadcrumbs, setBreadcrumbs] = useState<
+    { href: string; label: string }[]
+  >([]);
+
+  useEffect(() => {
+    // Split the pathname into segments
+    const pathSegments = pathname.split("/").filter((segment) => segment);
+
+    // Construct breadcrumbs
+    const breadcrumbList = pathSegments.map((segment, index) => {
+      const href = "/" + pathSegments.slice(0, index + 1).join("/");
+
+      let label = decodeURIComponent(segment).replace(/-/g, " ");
+
+      // make the first letter uppercase
+      label = label.charAt(0).toUpperCase() + label.slice(1);
+
+      return { href, label };
+    });
+
+    console.log(breadcrumbList);
+    setBreadcrumbs(breadcrumbList);
+  }, []);
 
   return (
     <>
@@ -44,13 +69,34 @@ export default function LayoutSelector({
                     <Separator orientation="vertical" className="mr-2 h-4" />
                     <Breadcrumb>
                       <BreadcrumbList>
-                        <BreadcrumbItem className="hidden md:block">
+                        {breadcrumbs.map((breadcrumb, index) => (
+                          <div key={breadcrumb.href}>
+                            <BreadcrumbItem
+                              key={breadcrumb.href}
+                              className="hidden md:block"
+                            >
+                              <BreadcrumbLink
+                                href={breadcrumb.href}
+                                key={breadcrumb.href}
+                              >
+                                {breadcrumb.label}
+                              </BreadcrumbLink>
+                            </BreadcrumbItem>
+                            {index !== breadcrumbs.length - 1 && (
+                              <BreadcrumbSeparator
+                                className="hidden md:block"
+                                key={breadcrumb.href}
+                              />
+                            )}
+                          </div>
+                        ))}
+                        {/* <BreadcrumbItem className="hidden md:block">
                           <BreadcrumbLink href="#">Placeholder</BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator className="hidden md:block" />
                         <BreadcrumbItem>
                           <BreadcrumbPage>Placeholder</BreadcrumbPage>
-                        </BreadcrumbItem>
+                        </BreadcrumbItem> */}
                       </BreadcrumbList>
                     </Breadcrumb>
                   </div>

@@ -9,7 +9,8 @@ import {
   Send,
   Settings2,
   MonitorPlay,
-  Construction
+  Construction,
+  FileVideo2
 } from "lucide-react";
 
 import { NavMain } from "./nav-main";
@@ -45,6 +46,11 @@ const data = {
       icon: Construction,
       isActive: true,
     },
+    {
+      title: "Video Analysis",
+      url: "/video-analysis",
+      icon: FileVideo2,
+    },
     // {
     //   title: "Settings",
     //   url: "/settings",
@@ -63,6 +69,7 @@ const data = {
       url: "#",
       icon: Send,
     },
+
   ],
 };
 
