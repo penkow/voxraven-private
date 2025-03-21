@@ -21,8 +21,21 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import MarkdownRenderer from "@/components/ui/markdown-renderer";
 
-export function InsightsDialog() {
+interface InsightsDialogProps {
+  summary: string;
+  targetAudience: string;
+  painPoints: string;
+  empathyMap: string;
+}
+
+export function InsightsDialog({
+  summary,
+  targetAudience,
+  painPoints,
+  empathyMap,
+}: InsightsDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -30,58 +43,47 @@ export function InsightsDialog() {
           Full Insights
         </Button>
       </DialogTrigger>
-      <DialogContent className="debug flex flex-col justify-center items-center mx-auto">
+      <DialogContent className="flex flex-col justify-center items-center w-[800px] debug">
         <DialogTitle>Insights</DialogTitle>
-        <Tabs defaultValue="account" className="w-[400px] debug">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="account">Account</TabsTrigger>
-            <TabsTrigger value="password">Password</TabsTrigger>
+        <Tabs defaultValue="summary" className="w-full h-[500px]">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="summary">Summary</TabsTrigger>
+            <TabsTrigger value="targetAudience">Target Audience</TabsTrigger>
+            <TabsTrigger value="painPoints">Pain Points</TabsTrigger>
+            <TabsTrigger value="empathyMap">Empathy Map</TabsTrigger>
           </TabsList>
-          <TabsContent value="account">
+          <TabsContent value="summary" className="overflow-y-auto h-[400px]">
             <Card>
               <CardHeader>
-                <CardTitle>Account</CardTitle>
-                <CardDescription>
-                  Make changes to your account here. Click save when you're
-                  done.
-                </CardDescription>
+                <CardTitle>Summary</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <div className="space-y-1">
-                  <Label htmlFor="name">Name</Label>
-                  <Input id="name" defaultValue="Pedro Duarte" />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="username">Username</Label>
-                  <Input id="username" defaultValue="@peduarte" />
-                </div>
+                <MarkdownRenderer>{summary}</MarkdownRenderer>
               </CardContent>
-              <CardFooter>
-                <Button>Save changes</Button>
-              </CardFooter>
             </Card>
           </TabsContent>
-          <TabsContent value="password">
+          <TabsContent value="targetAudience">
             <Card>
               <CardHeader>
-                <CardTitle>Password</CardTitle>
-                <CardDescription>
-                  Change your password here. After saving, you'll be logged out.
-                </CardDescription>
+                <CardTitle>Target Audience</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="space-y-1">
-                  <Label htmlFor="current">Current password</Label>
-                  <Input id="current" type="password" />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="new">New password</Label>
-                  <Input id="new" type="password" />
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button>Save password</Button>
-              </CardFooter>
+              <CardContent className="space-y-2">{targetAudience}</CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="painPoints">
+            <Card>
+              <CardHeader>
+                <CardTitle>Pain Points</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">{painPoints}</CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="empathyMap">
+            <Card>
+              <CardHeader>
+                <CardTitle>Empathy Map</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">{empathyMap}</CardContent>
             </Card>
           </TabsContent>
         </Tabs>

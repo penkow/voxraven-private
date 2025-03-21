@@ -233,7 +233,12 @@ export default function VideoItem({
           // <Button size="sm" variant="outline" className="h-6 w-24 px-2">
           //   View Insights
           // </Button>
-          <InsightsDialog />
+          <InsightsDialog
+            summary={videoSummary}
+            targetAudience={videoTargetAudience}
+            painPoints={videoPainPoints}
+            empathyMap={videoEmpathyMap}
+          />
         ) : (
           <Button
             size="sm"
