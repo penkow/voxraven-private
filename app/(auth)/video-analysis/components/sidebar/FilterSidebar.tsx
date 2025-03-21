@@ -1,73 +1,58 @@
-"use client";
-
-import type React from "react";
-
 import { useState, useEffect } from "react";
-import { Sliders, Home, Search, Users, Settings } from "lucide-react";
-
+import { Sliders, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FixedTextarea } from "./fixed-textarea";
+import { FixedTextarea } from "../common/FixedTextarea";
+import { FilterSettings, SearchResponse } from "../../lib/types";
+import { searchVideos } from "../../lib/api";
 
-export function FilterSidebar({
-  setIsActive,
-  setFinalResult,
-}: {
+interface FilterSidebarProps {
   setIsActive: (isActive: boolean) => void;
-  setFinalResult: (finalResult: any) => void;
-}) {
+  setFinalResult: (result: SearchResponse) => void;
+}
+
+export function FilterSidebar({ setIsActive, setFinalResult }: FilterSidebarProps) {
   const [views, setViews] = useState<number>(1000);
   const [viewsInput, setViewsInput] = useState<string>("1000");
-
-  const [minVideoCount, setminVideoCount] = useState<number>(5);
-  const [minVideoCountInput, setminVideoCountInput] = useState<string>("5");
-
+  const [minVideoCount, setMinVideoCount] = useState<number>(5);
+  const [minVideoCountInput, setMinVideoCountInput] = useState<string>("5");
   const [topic, setTopic] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleSearch = async () => {
-    setIsLoading(true);
-    setIsActive(true);
-    console.log("topic", topic);
-
-    // fetch post localhost:8001/search
-    const response = await fetch("http://localhost:8001/search", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        query: topic,
-        min_views: views,
-        min_results: minVideoCount,
-      }),
-    });
-    const data = await response.json();
-    console.log("data", data);
-
-    setFinalResult(data);
-    setIsActive(false);
-
-    setIsLoading(false);
-  };
-
-  // Update input fields when slider values change
   useEffect(() => {
     setViewsInput(views.toLocaleString());
   }, [views]);
 
   useEffect(() => {
-    setminVideoCountInput(minVideoCount.toString());
+    setMinVideoCountInput(minVideoCount.toString());
   }, [minVideoCount]);
+
+  const handleSearch = async () => {
+    try {
+      setIsLoading(true);
+      setIsActive(true);
+
+      const filters: FilterSettings = {
+        topic,
+        minViews: views,
+        minVideoCount,
+      };
+
+      const data = await searchVideos(filters);
+      setFinalResult(data);
+    } catch (error) {
+      console.error('Search failed:', error);
+      // Handle error (e.g., show toast notification)
+    } finally {
+      setIsActive(false);
+      setIsLoading(false);
+    }
+  };
 
   const handleViewsInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     setViewsInput(inputValue);
-
-    // Only update the actual value if the input is valid
-    if (inputValue.trim() === "") return;
 
     const rawValue = inputValue.replace(/,/g, "");
     const numValue = Number.parseInt(rawValue);
@@ -78,44 +63,30 @@ export function FilterSidebar({
   };
 
   const handleViewsInputBlur = () => {
-    // On blur, reset to the last valid value if empty or invalid
-    if (
-      viewsInput.trim() === "" ||
-      isNaN(Number.parseInt(viewsInput.replace(/,/g, "")))
-    ) {
+    if (viewsInput.trim() === "" || isNaN(Number.parseInt(viewsInput.replace(/,/g, "")))) {
       setViewsInput(views.toLocaleString());
     }
   };
 
-  const handleminVideoCountInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleMinVideoCountInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    setminVideoCountInput(inputValue);
-
-    // Only update the actual value if the input is valid
-    if (inputValue.trim() === "") return;
+    setMinVideoCountInput(inputValue);
 
     const numValue = Number.parseInt(inputValue);
 
     if (!isNaN(numValue) && numValue >= 1 && numValue <= 500) {
-      setminVideoCount(numValue);
+      setMinVideoCount(numValue);
     }
   };
 
-  const handleminVideoCountInputBlur = () => {
-    // On blur, reset to the last valid value if empty or invalid
-    if (
-      minVideoCountInput.trim() === "" ||
-      isNaN(Number.parseInt(minVideoCountInput))
-    ) {
-      setminVideoCountInput(minVideoCount.toString());
+  const handleMinVideoCountInputBlur = () => {
+    if (minVideoCountInput.trim() === "" || isNaN(Number.parseInt(minVideoCountInput))) {
+      setMinVideoCountInput(minVideoCount.toString());
     }
   };
 
   return (
     <div className="h-full w-full bg-background border flex flex-col shadow-lg rounded-md">
-      {/* Header */}
       <div className="border-b p-4">
         <div className="flex items-center gap-2">
           <Sliders className="h-5 w-5 text-primary" />
@@ -123,11 +94,9 @@ export function FilterSidebar({
         </div>
       </div>
 
-      {/* Content - Scrollable */}
       <div className="flex-1 overflow-y-auto">
-        {/* Navigation Section */}
         <div className="p-4 border-b">
-          <div className="space-y-2 ">
+          <div className="space-y-2">
             <FixedTextarea
               width="200px"
               height="100px"
@@ -139,14 +108,12 @@ export function FilterSidebar({
           </div>
         </div>
 
-        {/* Filter Settings Section */}
         <div className="p-4">
           <h3 className="text-sm font-medium text-muted-foreground mb-3">
             Filter Settings
           </h3>
 
           <div className="space-y-6">
-            {/* Views Slider */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <Label htmlFor="views">Views</Label>
@@ -175,28 +142,27 @@ export function FilterSidebar({
               </div>
             </div>
 
-            {/* Max Videos Slider */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <Label htmlFor="max-video-count">Min Results</Label>
+                <Label htmlFor="min-video-count">Min Results</Label>
                 <div className="w-24">
                   <input
                     type="text"
-                    id="max-video-count-input"
+                    id="min-video-count-input"
                     value={minVideoCountInput}
-                    onChange={handleminVideoCountInputChange}
-                    onBlur={handleminVideoCountInputBlur}
+                    onChange={handleMinVideoCountInputChange}
+                    onBlur={handleMinVideoCountInputBlur}
                     className="w-full h-8 px-2 text-right text-sm rounded-md border border-input bg-background"
                   />
                 </div>
               </div>
               <Slider
-                id="max-video-count"
+                id="min-video-count"
                 min={1}
                 max={500}
                 step={1}
                 value={[minVideoCount]}
-                onValueChange={(value) => setminVideoCount(value[0])}
+                onValueChange={(value) => setMinVideoCount(value[0])}
               />
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>1</span>
@@ -207,7 +173,6 @@ export function FilterSidebar({
         </div>
       </div>
 
-      {/* Footer */}
       <div className="border-t p-4">
         <Button
           type="submit"
@@ -223,4 +188,4 @@ export function FilterSidebar({
       </div>
     </div>
   );
-}
+} 

@@ -11,7 +11,7 @@ interface FixedTextareaProps
   label?: string;
 }
 
-const FixedTextarea = React.forwardRef<HTMLTextAreaElement, FixedTextareaProps>(
+export const FixedTextarea = React.forwardRef<HTMLTextAreaElement, FixedTextareaProps>(
   ({ className, width = "400px", height = "200px", label, ...props }, ref) => {
     const id = React.useId();
 
@@ -43,6 +43,5 @@ const FixedTextarea = React.forwardRef<HTMLTextAreaElement, FixedTextareaProps>(
     );
   }
 );
-FixedTextarea.displayName = "FixedTextarea";
 
-export { FixedTextarea };
+FixedTextarea.displayName = "FixedTextarea"; 
