@@ -1,14 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ArrowRight, Film, Settings, Loader2, Plus } from "lucide-react";
+import { useState } from "react";
+import { Loader2, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import VideoItem from "./video-item";
-import { type FoundVideo, searchVideos } from "./api";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import MarkdownRenderer from "@/components/ui/markdown-renderer";
+import ChatWidget from "./ChatWidget";
+
+interface VideoThumbnail {
+  url: string;
+  width: number;
+  height: number;
+}
+
+export interface FoundVideo {
+  title: string;
+  description: string;
+  published_at: string;
+  channel_title: string;
+  view_count: string;
+  like_count: string;
+  comment_count: string;
+  duration: string;
+  tags: string[];
+  thumbnails: VideoThumbnail[];
+  category_id: string;
+  video_id: string;
+  url: string;
+}
 
 function VideoItemSkeleton() {
   return (
@@ -61,7 +83,10 @@ export default function VideoSelectionInterface() {
   );
   const [isAddingManual, setIsAddingManual] = useState(false);
   const [synthesis, setSynthesis] = useState<string>("");
-
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [currentChatVideo, setCurrentChatVideo] = useState<FoundVideo | null>(
+    null
+  );
   const handleAddVideo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const videoUrl = manualUrl;
@@ -100,6 +125,12 @@ export default function VideoSelectionInterface() {
   const handleDeselectVideo = (video: FoundVideo) => {
     setSelectedVideos(selectedVideos.filter((v) => v.url !== video.url));
     console.log("Selected videos", selectedVideos);
+  };
+
+  const handleStartChat = (video: FoundVideo) => {
+    console.log("Starting chat", video);
+    setCurrentChatVideo(video);
+    setIsChatOpen(true);
   };
 
   const handleSynthesis = async () => {
@@ -144,6 +175,7 @@ export default function VideoSelectionInterface() {
                       video={video}
                       onSelect={handleSelectVideo}
                       onDeselect={handleDeselectVideo}
+                      onStartChat={handleStartChat}
                     />
                   ))}
                 </>
@@ -254,6 +286,11 @@ export default function VideoSelectionInterface() {
           </div>
         </div>
       </div>
+      <ChatWidget
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        currentChatVideo={currentChatVideo}
+      />
     </div>
   );
 }

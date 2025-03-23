@@ -1,22 +1,11 @@
 "use client";
 
-import { Plus, Minus, Film, Loader2, Check, Trash2, Info } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FoundVideo } from "./api";
+import { FoundVideo } from "./page";
 import { useState } from "react";
-import { TruncatedText } from "./truncated-text";
-import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CalendarIcon } from "lucide-react";
 import InsightsItem from "./InsightsItem";
 import { InsightsDialog } from "./InsightsDialog";
 
@@ -50,8 +39,10 @@ interface VideoItemProps {
     summary: string,
     empathyMap: string,
     painPoints: string,
-    targetAudience: string
+    targetAudience: string,
+    commentsAnalysis: string
   ) => void;
+  onStartChat: (video: FoundVideo) => void;
   onDeselect: (video: FoundVideo) => void;
 }
 
@@ -59,6 +50,7 @@ export default function VideoItem({
   video,
   onSelect,
   onDeselect,
+  onStartChat,
 }: VideoItemProps) {
   const [videoSummary, setVideoSummary] = useState<string>("");
   const [videoEmpathyMap, setVideoEmpathyMap] = useState<string>("");
@@ -66,7 +58,8 @@ export default function VideoItem({
   const [videoTargetAudience, setVideoTargetAudience] = useState<string>("");
   const [isAnalysisLoading, setIsAnalysisLoading] = useState<boolean>(false);
   const [isAnalysisComplete, setIsAnalysisComplete] = useState<boolean>(false);
-
+  const [videoCommentsAnalysis, setVideoCommentsAnalysis] =
+    useState<string>("");
   const [isSelected, setIsSelected] = useState<boolean>(false);
 
   const handleSelect = () => {
@@ -75,7 +68,8 @@ export default function VideoItem({
       videoSummary,
       videoEmpathyMap,
       videoPainPoints,
-      videoTargetAudience
+      videoTargetAudience,
+      videoCommentsAnalysis
     );
     setIsSelected(true);
   };
@@ -92,13 +86,28 @@ export default function VideoItem({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ youtubeUrl: videoUrl }),
+      body: JSON.stringify({ videoUrl: videoUrl }),
     });
 
     const data = await response.json();
 
     console.log(data);
     setVideoSummary(data.summary);
+  };
+
+  const analyzeComments = async (videoUrl: string) => {
+    console.log("Analyzing comments", videoUrl);
+    const response = await fetch(`http://localhost:3000/analyzeComments`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ youtubeUrl: videoUrl }),
+    });
+
+    const data = await response.json();
+    console.log(data);
+    setVideoCommentsAnalysis(data.commentsAnalysis);
   };
 
   const createEmpathyMap = async (videoUrl: string) => {
@@ -154,6 +163,7 @@ export default function VideoItem({
       createEmpathyMap(videoUrl),
       createPainPoints(videoUrl),
       createTargetAudience(videoUrl),
+      analyzeComments(videoUrl),
     ]);
 
     setIsAnalysisLoading(false);
@@ -238,6 +248,7 @@ export default function VideoItem({
             targetAudience={videoTargetAudience}
             painPoints={videoPainPoints}
             empathyMap={videoEmpathyMap}
+            commentsAnalysis={videoCommentsAnalysis}
           />
         ) : (
           <Button
@@ -253,7 +264,6 @@ export default function VideoItem({
             )}
           </Button>
         )}
-
         {isSelected ? (
           <Button
             size="sm"
@@ -275,6 +285,13 @@ export default function VideoItem({
             Select
           </Button>
         )}
+        <Button
+          onClick={() => onStartChat(video)}
+          size="sm"
+          className="h-6 w-24 px-2"
+        >
+          Chat with video
+        </Button>
       </div>
     </div>
   );

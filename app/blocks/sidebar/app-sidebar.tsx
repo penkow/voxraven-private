@@ -48,7 +48,7 @@ const data = {
     },
     {
       title: "Video Analysis",
-      url: "/manual",
+      url: "/analysis",
       icon: FileVideo2,
     },
     // {

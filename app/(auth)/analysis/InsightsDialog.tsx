@@ -23,11 +23,31 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import MarkdownRenderer from "@/components/ui/markdown-renderer";
 
+const TabContentWrapper = ({
+  title,
+  content,
+}: {
+  title: string;
+  content: string;
+}) => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2 overflow-y-auto h-[600px]">
+        <MarkdownRenderer>{content}</MarkdownRenderer>
+      </CardContent>
+    </Card>
+  );
+};
+
 interface InsightsDialogProps {
   summary: string;
   targetAudience: string;
   painPoints: string;
   empathyMap: string;
+  commentsAnalysis: string;
 }
 
 export function InsightsDialog({
@@ -35,6 +55,7 @@ export function InsightsDialog({
   targetAudience,
   painPoints,
   empathyMap,
+  commentsAnalysis,
 }: InsightsDialogProps) {
   return (
     <Dialog>
@@ -43,48 +64,36 @@ export function InsightsDialog({
           Full Insights
         </Button>
       </DialogTrigger>
-      <DialogContent className="flex flex-col justify-center items-center w-[800px] debug">
+      <DialogContent className="flex flex-col justify-center items-center min-w-[1200px] h-[800px]">
         <DialogTitle>Insights</DialogTitle>
-        <Tabs defaultValue="summary" className="w-full h-[500px]">
-          <TabsList className="grid w-full grid-cols-4">
+        <Tabs defaultValue="summary" className="h-[1000px]">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="summary">Summary</TabsTrigger>
             <TabsTrigger value="targetAudience">Target Audience</TabsTrigger>
             <TabsTrigger value="painPoints">Pain Points</TabsTrigger>
             <TabsTrigger value="empathyMap">Empathy Map</TabsTrigger>
+            <TabsTrigger value="commentsAnalysis">Comments Analysis</TabsTrigger>
           </TabsList>
-          <TabsContent value="summary" className="overflow-y-auto h-[400px]">
-            <Card>
-              <CardHeader>
-                <CardTitle>Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <MarkdownRenderer>{summary}</MarkdownRenderer>
-              </CardContent>
-            </Card>
+          <TabsContent value="summary" className="">
+            <TabContentWrapper title="Summary" content={summary} />
           </TabsContent>
           <TabsContent value="targetAudience">
-            <Card>
-              <CardHeader>
-                <CardTitle>Target Audience</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">{targetAudience}</CardContent>
-            </Card>
+            <TabContentWrapper
+              title="Target Audience"
+              content={targetAudience}
+            />
           </TabsContent>
           <TabsContent value="painPoints">
-            <Card>
-              <CardHeader>
-                <CardTitle>Pain Points</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">{painPoints}</CardContent>
-            </Card>
+            <TabContentWrapper title="Pain Points" content={painPoints} />
           </TabsContent>
           <TabsContent value="empathyMap">
-            <Card>
-              <CardHeader>
-                <CardTitle>Empathy Map</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">{empathyMap}</CardContent>
-            </Card>
+            <TabContentWrapper title="Empathy Map" content={empathyMap} />
+          </TabsContent>
+          <TabsContent value="commentsAnalysis">
+            <TabContentWrapper
+              title="Comments Analysis"
+              content={commentsAnalysis}
+            />
           </TabsContent>
         </Tabs>
       </DialogContent>
