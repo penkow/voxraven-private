@@ -1,20 +1,10 @@
 "use client";
 
 import * as React from "react";
-import {
-  FileStack,
-  MessageSquareMore,
-  Bird,
-  LifeBuoy,
-  Send,
-  Settings2,
-  MonitorPlay,
-  Construction,
-  FileVideo2
-} from "lucide-react";
-
+import { useEffect, useState } from "react";
+import { Bird } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { NavMain } from "./nav-main";
-import { NavProjects } from "./nav-projects";
 import { NavSecondary } from "./nav-secondary";
 import { NavUser } from "./nav-user";
 import {
@@ -26,54 +16,25 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "AI Content Creator",
-      url: "/chat",
-      icon: MessageSquareMore,
-      isActive: true,
-    },
-    {
-      title: "Agent Builder",
-      url: "/builder",
-      icon: Construction,
-      isActive: true,
-    },
-    {
-      title: "Video Analysis",
-      url: "/analysis",
-      icon: FileVideo2,
-    },
-    // {
-    //   title: "Settings",
-    //   url: "/settings",
-    //   icon: Settings2,
-    //   isActive: false
-    // },
-  ],
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
-
-  ],
-};
-
+import { Button } from "@/components/ui/button";
+import { Project } from "../../(auth)/analysis/[id]/types";
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const router = useRouter();
+  const [projects, setProjects] = useState<Project[]>([]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const response = await fetch("http://localhost:3000/api/projects");
+      const data: Project[] = await response.json();
+      setProjects(data);
+    };
+    fetchProjects();
+  }, []);
+
+  const handleNewAnalysis = async () => {
+    router.push(`/analysis`);
+  };
+
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -91,11 +52,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
+          <SidebarMenuItem className="pt-4">
+            <Button
+              size="default"
+              variant="outline"
+              className="w-full font-medium"
+              onClick={handleNewAnalysis}
+            >
+              New Analysis
+            </Button>
+          </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <div className="overflow-y-auto">
+          <NavMain items={projects} />
+        </div>
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

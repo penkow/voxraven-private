@@ -47,44 +47,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-
-const data: AnalysisProject[] = [
-  {
-    id: "m5gr84i9",
-    title: "Tech Review Analysis",
-    status: "completed",
-    videoUrl: "https://youtube.com/watch?v=example1",
-    createdAt: "2024-03-20",
-  },
-  {
-    id: "3u1reuv4",
-    title: "Product Comparison",
-    status: "processing",
-    videoUrl: "https://youtube.com/watch?v=example2",
-    createdAt: "2024-03-19",
-  },
-  {
-    id: "derv1ws0",
-    title: "Market Research",
-    status: "pending",
-    videoUrl: "https://youtube.com/watch?v=example3",
-    createdAt: "2024-03-18",
-  },
-  {
-    id: "5kma53ae",
-    title: "Competitor Analysis",
-    status: "completed",
-    videoUrl: "https://youtube.com/watch?v=example4",
-    createdAt: "2024-03-17",
-  },
-  {
-    id: "bhqecj4p",
-    title: "Trend Analysis",
-    status: "processing",
-    videoUrl: "https://youtube.com/watch?v=example5",
-    createdAt: "2024-03-16",
-  },
-]
+import { getProjects, createProject } from "./lib/api"
 
 export type AnalysisProject = {
   id: string
@@ -212,9 +175,38 @@ export default function DataTableDemo() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-  const [projects, setProjects] = React.useState<AnalysisProject[]>(data)
+  const [projects, setProjects] = React.useState<AnalysisProject[]>([])
   const [newProjectName, setNewProjectName] = React.useState("")
   const [isDialogOpen, setIsDialogOpen] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(true)
+
+  React.useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const fetchedProjects = await getProjects();
+        setProjects(fetchedProjects);
+      } catch (error) {
+        console.error("Failed to fetch projects:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  const handleAddProject = async () => {
+    if (!newProjectName.trim()) return;
+
+    try {
+      const newProject = await createProject(newProjectName);
+      setProjects([newProject, ...projects]);
+      setNewProjectName("");
+      setIsDialogOpen(false);
+    } catch (error) {
+      console.error("Failed to create project:", error);
+    }
+  };
 
   const table = useReactTable({
     data: projects,
@@ -235,116 +227,70 @@ export default function DataTableDemo() {
     },
   })
 
-  const handleAddProject = () => {
-    if (!newProjectName.trim()) return
-
-    const newProject: AnalysisProject = {
-      id: Math.random().toString(36).substring(7),
-      title: newProjectName,
-      status: "pending",
-      videoUrl: "",
-      createdAt: new Date().toISOString().split('T')[0],
-    }
-
-    setProjects([newProject, ...projects])
-    setNewProjectName("")
-    setIsDialogOpen(false)
-  }
-
   return (
-    <div className="w-full h-[calc(100vh-100px)] flex flex-col">
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter by title..."
-          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("title")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className="rounded-md border flex-1 overflow-auto">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className="cursor-pointer hover:bg-muted/50"
-                  onClick={(e) => {
-                    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('input')) {
-                      return;
-                    }
-                    router.push(`/analysis?id=${row.original.id}`);
-                  }}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+    <div className="container mx-auto py-10">
+      <div className="rounded-md border">
+        {isLoading ? (
+          <div className="flex items-center justify-center p-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    )
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={(e) => {
+                      if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('input')) {
+                        return;
+                      }
+                      router.push(`/analysis?id=${row.original.id}`);
+                    }}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        )}
       </div>
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">

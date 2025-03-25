@@ -86,7 +86,7 @@ export default function VideoItem({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ videoUrl: videoUrl }),
+      body: JSON.stringify({ youtubeUrl: videoUrl }),
     });
 
     const data = await response.json();
