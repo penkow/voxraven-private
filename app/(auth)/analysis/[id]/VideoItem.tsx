@@ -38,9 +38,7 @@ interface VideoItemProps {
   videoPainPoints: string;
   videoTargetAudience: string;
   videoCommentsAnalysis: string;
-  onSelect: (video: VideoInfo) => void;
   onStartChat: (video: VideoData) => void;
-  onDeselect: (video: VideoInfo) => void;
 }
 
 export default function VideoItem({
@@ -51,25 +49,11 @@ export default function VideoItem({
   videoPainPoints,
   videoTargetAudience,
   videoCommentsAnalysis,
-  onSelect,
-  onDeselect,
   onStartChat,
 }: VideoItemProps) {
-  const [isSelected, setIsSelected] = useState<boolean>(false);
-
-  const handleSelect = () => {
-    onSelect(video);
-    setIsSelected(true);
-  };
-
-  const handleDeselect = () => {
-    onDeselect(video);
-    setIsSelected(false);
-  };
-
   return (
     <div className="flex flex-col md:flex-row p-4 border rounded-md bg-background gap-4">
-      <div className="flex flex-col items-center w-full md:w-1/4">
+      <div className="flex flex-col items-center w-full  md:w-1/6">
         <div className="h-[100px] w-full">
           <a href={video.url} target="_blank" rel="noopener noreferrer">
             <Image
@@ -146,25 +130,6 @@ export default function VideoItem({
           commentsAnalysis={videoCommentsAnalysis}
         />
 
-        {isSelected ? (
-          <Button
-            size="sm"
-            variant="destructive"
-            className="h-6 w-24 px-2"
-            onClick={handleDeselect}
-          >
-            Remove
-          </Button>
-        ) : (
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-6 w-24 px-2"
-            onClick={handleSelect}
-          >
-            Select
-          </Button>
-        )}
         <Button
           onClick={() => onStartChat(videoData)}
           size="sm"
