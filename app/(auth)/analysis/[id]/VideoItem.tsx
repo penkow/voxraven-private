@@ -110,7 +110,7 @@ export default function VideoItem({
         </a>
         <div className="flex flex-col gap-1">
           <div className="text-xs font-bold">Description:</div>
-          <div className="text-xs text-muted-foreground line-clamp-2">
+          <div className="text-xs text-muted-foreground line-clamp-4">
             {video.description}
           </div>
         </div>

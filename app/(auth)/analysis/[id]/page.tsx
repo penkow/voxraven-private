@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, MessageCircle, Plus } from "lucide-react";
+import { Loader2, MessageCircle, Plus, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import VideoItem from "./VideoItem";
@@ -16,13 +16,14 @@ import {
 import ChatContainer from "./ChatContainer";
 import { useParams } from "next/navigation";
 import { VideoData, ProjectData, VideoInfo } from "./types";
+import { AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 export default function VideoSelectionInterface() {
   const [selectedVideos, setSelectedVideos] = useState<any[]>([]);
-  const [projectVideosData, setProjectVideosData] = useState<VideoData[]>([]);
+  const [projectData, setProjectData] = useState<ProjectData | null>(null);
   const [manualUrl, setManualUrl] = useState("");
   const [isAddingManual, setIsAddingManual] = useState(false);
-  const [synthesis, setSynthesis] = useState<string>("");
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [currentChatVideo, setCurrentChatVideo] = useState<VideoData | null>(
     null
@@ -47,7 +48,10 @@ export default function VideoSelectionInterface() {
     const data: ProjectData = await response.json();
     console.log("Project data", data);
 
-    setProjectVideosData(data.videosData);
+    setProjectData(data);
+    setIsAddingManual(false);
+    setIsModalOpen(false);
+    setManualUrl("");
   };
 
   useEffect(() => {
@@ -55,7 +59,7 @@ export default function VideoSelectionInterface() {
       const response = await fetch(`http://localhost:3000/api/projects/${id}`);
       if (response.ok) {
         const data: ProjectData = await response.json();
-        setProjectVideosData(data.videosData);
+        setProjectData(data);
       } else {
         console.error("Failed to fetch project");
         console.log(response);
@@ -79,12 +83,14 @@ export default function VideoSelectionInterface() {
     setCurrentChatVideo(videoData);
     setIsChatOpen(true);
   };
+  
 
   return (
-    <div className="w-full h-full rounded-lg grid grid-cols-12 ">
-      <div className="col-span-8 relative">
+    <div className="w-full h-full rounded-lg flex">
+      <div className="flex-1 relative transition-all duration-300 ease-in-out">
         <div className="space-y-2 p-4 overflow-y-auto h-[900px]">
-          {projectVideosData.map((video) => (
+          <h2 className="text-lg font-medium mb-4">{projectData?.project.title || "Loading..."}</h2>
+          {projectData?.videosData.map((video) => (
             <VideoItem
               key={video.info.url}
               video={video.info}
@@ -136,20 +142,39 @@ export default function VideoSelectionInterface() {
         </Dialog>
       </div>
 
-      <div className="col-span-4 border-l border-slate-200">
-        <div className="border-b flex items-center justify-center p-2 font-bold">
-          <MessageCircle className="h-5 w-5 text-primary" />
-          Chatting with:{" "}
-          <span className="font-normal">{currentChatVideo?.info.title}</span>
-        </div>
-        <ChatContainer currentChatVideo={currentChatVideo} />
-      </div>
+      <AnimatePresence mode="popLayout">
+        {isChatOpen && (
+          <motion.div
+            className="w-96 border-l border-gray-200"
+            initial={{ x: "100%", opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: "100%", opacity: 0 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+          >
+            <div className="h-full flex flex-col">
+              <div className="flex items-center justify-between p-2 border-b">
+                <div className="flex items-center font-bold space-x-2">
+                  <MessageCircle className="h-5 w-5 text-primary" />
+                  <div>Chatting with:</div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsChatOpen(false)}
+                  className="h-8 w-8"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="p-2 text-center text-lg font-medium border-b">
+                {currentChatVideo?.info.title}
+              </div>
 
-      {/* <ChatWidget
-        isOpen={isChatOpen}
-        onClose={() => setIsChatOpen(false)}
-        currentChatVideo={currentChatVideo}
-      /> */}
+              <ChatContainer currentChatVideo={currentChatVideo} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { MessageCircle, X, Send } from "lucide-react";
+import { MessageCircle, X, Send, Loader2 } from "lucide-react";
 import MarkdownRenderer from "@/components/ui/markdown-renderer";
 import { VideoData } from "./types";
 interface Message {
@@ -31,9 +31,12 @@ export default function ChatContainer({
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isThinking, setIsThinking] = useState(false);
 
   const askVideo = async (question: string) => {
-    const response = await fetch(`http://localhost:3000/askVideo`, {
+    console.log("Sending question to server");
+    setIsThinking(true);
+    const response = await fetch(`http://localhost:3000/api/video/askVideo`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -44,7 +47,9 @@ export default function ChatContainer({
       }),
     });
     const data = await response.json();
+    console.log("Received response from server");
     console.log(data);
+    setIsThinking(false);
     return data;
   };
 
@@ -58,7 +63,8 @@ export default function ChatContainer({
       setMessages([
         {
           id: 1,
-          text: "You are chatting with the video: " + currentChatVideo?.info.title,
+          text:
+            "You are chatting with the video: " + currentChatVideo?.info.title,
           isUser: false,
         },
       ]);
@@ -89,16 +95,6 @@ export default function ChatContainer({
       isUser: false,
     };
     setMessages((prev) => [...prev, responseMessage]);
-
-    // // Simulate response after a short delay
-    // setTimeout(() => {
-    //   const responseMessage: Message = {
-    //     id: messages.length + 2,
-    //     text: `Thanks for your message: "${inputValue}"`,
-    //     isUser: false,
-    //   };
-    //   setMessages((prev) => [...prev, responseMessage]);
-    // }, 1000);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -108,7 +104,7 @@ export default function ChatContainer({
   };
 
   return (
-    <div className="flex flex-col h-[800px]">
+    <div className="flex flex-col h-[calc(100vh-10rem)]">
       <div className="flex-1 overflow-y-auto p-3 space-y-4">
         {messages.map((message) => (
           <div
@@ -128,6 +124,13 @@ export default function ChatContainer({
             </div>
           </div>
         ))}
+        {isThinking && (
+          <div className={`flex justify-start`}>
+            <div className="max-w-[80%] rounded-lg px-3 py-2 bg-muted">
+              <Loader2 className="h-4 w-4 animate-spin" />
+            </div>
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
       <div className="p-3 pt-0">

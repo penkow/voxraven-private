@@ -24,9 +24,9 @@ import { Project } from "../../(auth)/analysis/[id]/types";
 export function NavMain({
   items,
 }: {
-  items: Project[];
+  items: Project[] | null;
 }) {
-  if (items?.length === 0) {
+  if (items === null || items === undefined) {
     return (
       <SidebarGroup>
         <SidebarGroupLabel>Analyses</SidebarGroupLabel>
