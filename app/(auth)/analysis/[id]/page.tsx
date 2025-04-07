@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, MessageCircle, Plus, X } from "lucide-react";
+import { Loader2, MessageCircle, Plus, Sparkles, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import VideoItem from "./VideoItem";
@@ -59,6 +59,7 @@ export default function VideoSelectionInterface() {
       const response = await fetch(`http://localhost:3000/api/projects/${id}`);
       if (response.ok) {
         const data: ProjectData = await response.json();
+        console.log(data);
         setProjectData(data);
       } else {
         console.error("Failed to fetch project");
@@ -89,7 +90,47 @@ export default function VideoSelectionInterface() {
     <div className="w-full h-full rounded-lg flex">
       <div className="flex-1 relative transition-all duration-300 ease-in-out">
         <div className="space-y-2 p-4 overflow-y-auto h-[900px]">
-          <h2 className="text-lg font-medium mb-4">{projectData?.project.title || "Loading..."}</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-medium">{projectData?.project.title || "Loading..."}</h2>
+            <div className="flex gap-2">
+              <Button size="sm" className="bg-purple-700 hover:bg-purple-600 text-white">
+                <Sparkles className="h-4 w-4" />
+                Generated Insights
+              </Button>
+              <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                <DialogTrigger asChild>
+                  <Button size="sm">
+                    <Plus className="h-4 w-4" />
+                    Add Video
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add YouTube Video</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleAddVideo} className="space-y-4">
+                    <Input
+                      type="url"
+                      placeholder="Enter YouTube URL"
+                      value={manualUrl}
+                      onChange={(e) => setManualUrl(e.target.value)}
+                      required
+                    />
+                    <Button type="submit" disabled={isAddingManual}>
+                      {isAddingManual ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Adding...
+                        </>
+                      ) : (
+                        "Add Video"
+                      )}
+                    </Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
           {projectData?.videosData.map((video) => (
             <VideoItem
               key={video.info.url}
@@ -106,40 +147,6 @@ export default function VideoSelectionInterface() {
             />
           ))}
         </div>
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogTrigger asChild>
-            <Button
-              size="icon"
-              className="absolute bottom-4 right-4 rounded-full w-12 h-12"
-            >
-              <Plus className="h-6 w-6" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add YouTube Video</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleAddVideo} className="space-y-4">
-              <Input
-                type="url"
-                placeholder="Enter YouTube URL"
-                value={manualUrl}
-                onChange={(e) => setManualUrl(e.target.value)}
-                required
-              />
-              <Button type="submit" disabled={isAddingManual}>
-                {isAddingManual ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Adding...
-                  </>
-                ) : (
-                  "Add Video"
-                )}
-              </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
       </div>
 
       <AnimatePresence mode="popLayout">
