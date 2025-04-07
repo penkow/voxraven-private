@@ -32,6 +32,7 @@ const AnalysisPage = () => {
         }),
       });
       const data: Project = await response.json();
+      console.log(data);
       
       router.push(`/analysis/${data.id}`);
     } catch (error) {
