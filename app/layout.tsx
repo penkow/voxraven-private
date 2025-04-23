@@ -6,6 +6,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import LayoutSelector from "./layout-selector";
 import { Toaster } from "@/components/ui/sonner";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="light">
+    <html lang="en" className={"light "}>
       <body>
         <Providers>
           <LayoutSelector children={children} />

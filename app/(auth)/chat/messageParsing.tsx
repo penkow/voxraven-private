@@ -30,7 +30,6 @@ export const parse_chunk = (chunk: ReceivedChunk) => {
 
   if (chunk_type.includes("AIMessageChunk")) {
     const chunk_kwargs = chunk.kwargs as AIMessageChunk;
-    console.log(chunk_kwargs['type']);
     const content = chunk_kwargs.content;
     const tool_calls = chunk_kwargs.tool_calls;
     // const tool_call_chunks = chunk_kwargs.tool_call_chunks;
