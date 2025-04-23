@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/card";
 import { Youtube } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Project } from "../../(auth)/analysis/[id]/types";
+import { Project } from "../../../../voxraven-server-private/node_modules/@prisma/client";
+
 const AnalysisPage = () => {
   const [videoUrl, setVideoUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
