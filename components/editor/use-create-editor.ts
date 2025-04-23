@@ -185,8 +185,6 @@ export const useCreateEditor = (
       plugins: [
         ...copilotPlugins,
         ...editorPlugins,
-        FixedToolbarPlugin,
-        FloatingToolbarPlugin,
       ],
       value: [
         {

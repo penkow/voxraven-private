@@ -121,23 +121,23 @@ export function FixedToolbarButtons() {
               <StrikethroughIcon />
             </MarkToolbarButton>
 
-            <MarkToolbarButton nodeType={CodePlugin.key} tooltip="Code (⌘+E)">
+            {/* <MarkToolbarButton nodeType={CodePlugin.key} tooltip="Code (⌘+E)">
               <Code2Icon />
-            </MarkToolbarButton>
+            </MarkToolbarButton> */}
 
-            <ColorDropdownMenu
+            {/* <ColorDropdownMenu
               nodeType={FontColorPlugin.key}
               tooltip="Text color"
             >
               <BaselineIcon />
-            </ColorDropdownMenu>
+            </ColorDropdownMenu> */}
 
-            <ColorDropdownMenu
+            {/* <ColorDropdownMenu
               nodeType={FontBackgroundColorPlugin.key}
               tooltip="Background color"
             >
               <PaintBucketIcon />
-            </ColorDropdownMenu>
+            </ColorDropdownMenu> */}
           </ToolbarGroup>
 
           <ToolbarGroup>
@@ -149,43 +149,43 @@ export function FixedToolbarButtons() {
             <ToggleToolbarButton />
           </ToolbarGroup>
 
-          <ToolbarGroup>
+          {/* <ToolbarGroup>
             <LinkToolbarButton />
             <TableDropdownMenu />
             <EmojiDropdownMenu />
-          </ToolbarGroup>
+          </ToolbarGroup> */}
 
-          <ToolbarGroup>
+          {/* <ToolbarGroup>
             <MediaToolbarButton nodeType={ImagePlugin.key} />
             <MediaToolbarButton nodeType={VideoPlugin.key} />
             <MediaToolbarButton nodeType={AudioPlugin.key} />
             <MediaToolbarButton nodeType={FilePlugin.key} />
-          </ToolbarGroup>
+          </ToolbarGroup> */}
 
-          <ToolbarGroup>
+          {/* <ToolbarGroup>
             <LineHeightDropdownMenu />
             <OutdentToolbarButton />
             <IndentToolbarButton />
-          </ToolbarGroup>
+          </ToolbarGroup> */}
 
-          <ToolbarGroup>
+          {/* <ToolbarGroup>
             <MoreDropdownMenu />
-          </ToolbarGroup>
+          </ToolbarGroup> */}
         </>
       )}
 
       <div className="grow" />
 
-      <ToolbarGroup>
+      {/* <ToolbarGroup>
         <MarkToolbarButton nodeType={HighlightPlugin.key} tooltip="Highlight">
           <HighlighterIcon />
         </MarkToolbarButton>
         <CommentToolbarButton />
-      </ToolbarGroup>
+      </ToolbarGroup> */}
 
-      <ToolbarGroup>
+      {/* <ToolbarGroup>
         <ModeDropdownMenu />
-      </ToolbarGroup>
+      </ToolbarGroup> */}
     </div>
   );
 }
