@@ -4,16 +4,19 @@ import { useParams } from "next/navigation";
 import { Toaster } from "sonner";
 import { PlateEditor } from "@/components/editor/plate-editor";
 import { SettingsProvider } from "@/components/editor/settings";
+import { SavedProvider } from "./save-provider";
 
 export default function Page() {
   const { id } = useParams();
 
   if (id) {
     return (
-      <div className="h-[900px] w-[1400px] debug" data-registry="plate">
-        <SettingsProvider>
-          <PlateEditor projectId={id as string} />
-        </SettingsProvider>
+      <div className="" data-registry="plate">
+        <SavedProvider>
+          <SettingsProvider>
+            <PlateEditor projectId={id as string} />
+          </SettingsProvider>
+        </SavedProvider>
       </div>
     );
   }

@@ -71,23 +71,23 @@ export function FloatingToolbarButtons() {
               <StrikethroughIcon />
             </MarkToolbarButton>
 
-            <MarkToolbarButton nodeType={CodePlugin.key} tooltip="Code (⌘+E)">
+            {/* <MarkToolbarButton nodeType={CodePlugin.key} tooltip="Code (⌘+E)">
               <Code2Icon />
             </MarkToolbarButton>
 
-            <InlineEquationToolbarButton />
+            <InlineEquationToolbarButton /> */}
 
             <LinkToolbarButton />
           </ToolbarGroup>
         </>
       )}
 
-      <ToolbarGroup>
+      {/* <ToolbarGroup>
         <CommentToolbarButton />
         <SuggestionToolbarButton />
 
         {!readOnly && <MoreDropdownMenu />}
-      </ToolbarGroup>
+      </ToolbarGroup> */}
     </>
   );
 }

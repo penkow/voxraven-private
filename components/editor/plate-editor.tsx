@@ -12,6 +12,7 @@ import { Editor, EditorContainer } from "@/components/plate-ui/editor";
 import remarkEmoji from "remark-emoji";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
+import { useIsSaved } from "../../hooks/use-is-saved";
 
 import { toast } from "sonner";
 
@@ -19,6 +20,7 @@ import { MarkdownPlugin, remarkMdx } from "@udecode/plate-markdown";
 
 import { Synthesis } from "@prisma/client";
 import { useDebounce } from "./use-debounce";
+import { useSaved } from "@/app/(auth)/insights/[id]/save-provider";
 
 interface PlateEditorProps {
   projectId: string;
@@ -27,8 +29,13 @@ interface PlateEditorProps {
 export function PlateEditor({ projectId }: PlateEditorProps) {
   const [markdownValue, setMarkdownValue] = useState("");
   const debouncedMarkdownValue = useDebounce(markdownValue, 500);
+  const { setIsSaved } = useSaved();
 
   const editor = useCreateEditor();
+
+  useEffect(() => {
+    setIsSaved(false);
+  }, [markdownValue]);
 
   useEffect(() => {
     const updateSynthesis = async () => {
@@ -42,9 +49,10 @@ export function PlateEditor({ projectId }: PlateEditorProps) {
             synthesis: debouncedMarkdownValue,
           }),
         });
-        toast.success("Success", {
-          description: "Changes saved remotely.",
-        });
+        // toast.success("Success", {
+        //   description: "Changes saved remotely.",
+        // });
+        setIsSaved(true);
       } catch (error) {
         console.error("Failed to update synthesis:", error);
       }
@@ -87,7 +95,9 @@ export function PlateEditor({ projectId }: PlateEditorProps) {
       <Plate
         editor={editor}
         onChange={(e) => {
-          setMarkdownValue(editor.getApi(MarkdownPlugin).markdown.serialize({value: e.value}));
+          setMarkdownValue(
+            editor.getApi(MarkdownPlugin).markdown.serialize({ value: e.value })
+          );
         }}
       >
         <EditorContainer>
