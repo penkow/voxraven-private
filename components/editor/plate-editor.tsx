@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
@@ -15,18 +15,9 @@ import remarkMath from "remark-math";
 
 import { toast } from "sonner";
 
-import {
-  MarkdownPlugin,
-  remarkMdx,
-  remarkMention,
-} from "@udecode/plate-markdown";
+import { MarkdownPlugin, remarkMdx } from "@udecode/plate-markdown";
 
-import {
-  Project,
-  Video,
-  VideoInsights,
-  Synthesis,
-} from "../../../voxraven-server-private/node_modules/@prisma/client";
+import { Synthesis } from "../../../voxraven-server-private/node_modules/@prisma/client";
 import { useDebounce } from "./use-debounce";
 
 interface PlateEditorProps {
@@ -95,11 +86,9 @@ export function PlateEditor({ projectId }: PlateEditorProps) {
     <DndProvider backend={HTML5Backend}>
       <Plate
         editor={editor}
-        onChange={(e) =>
-          setMarkdownValue(
-            editor.getApi(MarkdownPlugin).markdown.serialize(e.value)
-          )
-        }
+        onChange={(e) => {
+          setMarkdownValue(editor.getApi(MarkdownPlugin).markdown.serialize({value: e.value}));
+        }}
       >
         <EditorContainer>
           <Editor variant="fullWidth" />

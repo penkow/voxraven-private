@@ -20,6 +20,9 @@ const eslintConfig = [
       "react/no-unescaped-entities": "off",
       "@next/next/no-html-link-for-pages": "off",
       "react-hooks/exhaustive-deps": "off",
+      "react/display-name": "off",
+      "@typescript-eslint/no-unused-expressions": "off",
+      "@typescript-eslint/no-empty-object-type": "off"
     },
   },
 ];

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, MessageCircle, Plus, Sparkles, Sparkles, X } from "lucide-react";
+import { Loader2, MessageCircle, Plus, Sparkles, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import VideoItem from "./blocks/VideoItem";
@@ -18,12 +18,8 @@ import { useParams, useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
 
-import {
-  Project,
-  Video,
-  VideoInsights,
-  Synthesis,
-} from "../../../../../voxraven-server-private/node_modules/@prisma/client";
+import { Project } from "../../../../../voxraven-server-private/node_modules/@prisma/client";
+import { VideoFullType } from "../../../../../voxraven-server-private/prisma/fulltypes";
 
 export default function VideoSelectionInterface() {
   const { id } = useParams();
@@ -33,9 +29,10 @@ export default function VideoSelectionInterface() {
   const [videoUrl, setVideoUrl] = useState("");
 
   // Retrieved Data
-  const [projectVideos, setProjectVideos] = useState<Video[]>([]);
+  const [projectVideos, setProjectVideos] = useState<VideoFullType[]>([]);
   const [project, setProject] = useState<Project | null>(null);
-  const [currentChatVideo, setCurrentChatVideo] = useState<Video | null>(null);
+  const [currentChatVideo, setCurrentChatVideo] =
+    useState<VideoFullType | null>(null);
 
   // State Management
   const [isAddingManual, setIsAddingManual] = useState(false);
@@ -68,7 +65,7 @@ export default function VideoSelectionInterface() {
       }
     );
 
-    const videos: Video[] = await response.json();
+    const videos: VideoFullType[] = await response.json();
 
     setProjectVideos(videos);
     setIsAddingManual(false);
@@ -87,13 +84,13 @@ export default function VideoSelectionInterface() {
       const videosResponse = await fetch(
         `http://localhost:3000/api/projects/${id}/videos`
       );
-      const videos: Video[] = await videosResponse.json();
+      const videos: VideoFullType[] = await videosResponse.json();
       setProjectVideos(videos);
     };
     fetchProject();
   }, []);
 
-  const handleStartChat = (video: Video) => {
+  const handleStartChat = (video: VideoFullType) => {
     setCurrentChatVideo(video);
     setIsChatOpen(true);
   };

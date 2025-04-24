@@ -6,12 +6,9 @@ import Image from "next/image";
 
 import InsightsItem from "./InsightsItem";
 import { InsightsDialog } from "./InsightsDialog";
-import {
-  Project,
-  Video,
-  VideoInsights,
-  Synthesis,
-} from "../../../../../../voxraven-server-private/node_modules/@prisma/client";
+
+import {VideoFullType} from "../../../../../../voxraven-server-private/prisma/fulltypes"
+
 import { VideoHooksTimeline } from "./HooksTimeline";
 import VideoPlayer from "./VideoPlayer";
 const formatDate = (dateString: string) => {
@@ -37,9 +34,10 @@ const formatDate = (dateString: string) => {
 };
 
 interface VideoItemProps {
-  video: Video;
-  onStartChat: (video: Video) => void;
+  video: VideoFullType;
+  onStartChat: (video: VideoFullType) => void;
 }
+
 
 export default function VideoItem({ video, onStartChat }: VideoItemProps) {
   const extractYoutubeVideoId = (url: string) => {
@@ -77,8 +75,8 @@ export default function VideoItem({ video, onStartChat }: VideoItemProps) {
             />
           </a> */}
           <VideoPlayer
-            videoId={extractYoutubeVideoId(video.url)}
-            currentTime={currentTime}
+            videoId={extractYoutubeVideoId(video.url) || ""}
+            currentTime={currentTime || 0}
             playerTimeCallback={handlePlayerTime}
           />
         </div>
@@ -146,12 +144,12 @@ export default function VideoItem({ video, onStartChat }: VideoItemProps) {
         </div>
 
         <div className="px-2">
-          <VideoHooksTimeline
-            hooks={video.videoInsights[0].hooks.hooks}
+          {/* <VideoHooksTimeline
+            hooks={video.videoInsights[0].hooks}
             videoDuration={video.duration}
             jumpToSecond={jumpToTime}
             videoWatchProgress={videoWatchProgress}
-          />
+          /> */}
         </div>
       </div>
 

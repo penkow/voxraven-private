@@ -19,7 +19,8 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Project } from "../../(auth)/analysis/[id]/types";
+
+import { Project } from "../../../../voxraven-server-private/node_modules/@prisma/client";
 
 export function NavMain({
   items,

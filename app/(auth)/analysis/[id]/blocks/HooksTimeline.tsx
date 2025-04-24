@@ -14,7 +14,7 @@ type Hook = {
 }
 
 type VideoHooksTimelineProps = {
-  hooks: Hook[]
+  hooks: Hook[] | null
   videoDuration: number
   jumpToSecond: (seconds: number) => void
   videoWatchProgress: number
@@ -55,7 +55,7 @@ export function VideoHooksTimeline({
         </div>
 
         {/* Hook markers */}
-        {hooks.map((hook, index) => {
+        {hooks?.map((hook, index) => {
           const position = (hook.timeInSeconds / videoDuration) * 100
           const isActive = activeHook === index
 

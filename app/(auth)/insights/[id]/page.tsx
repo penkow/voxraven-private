@@ -8,11 +8,13 @@ import { SettingsProvider } from "@/components/editor/settings";
 export default function Page() {
   const { id } = useParams();
 
-  return (
-    <div className="h-[900px] w-[1400px] debug" data-registry="plate">
-      <SettingsProvider>
-        <PlateEditor projectId={id} />
-      </SettingsProvider>
-    </div>
-  );
+  if (id) {
+    return (
+      <div className="h-[900px] w-[1400px] debug" data-registry="plate">
+        <SettingsProvider>
+          <PlateEditor projectId={id as string} />
+        </SettingsProvider>
+      </div>
+    );
+  }
 }

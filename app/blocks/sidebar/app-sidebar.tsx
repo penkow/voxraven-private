@@ -17,7 +17,10 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { Project } from "../../(auth)/analysis/[id]/types";
+
+
+import { Project } from "../../../../voxraven-server-private/node_modules/@prisma/client";
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
   const [projects, setProjects] = useState<Project[] | null>(null);
