@@ -19,8 +19,10 @@ import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
 
 import { Project } from "@prisma/client";
-import { VideoFullType } from "../../../../../voxraven-server-private/prisma/fulltypes";
-
+import { Prisma } from "@prisma/client";
+export type VideoFullType = Prisma.VideoGetPayload<{
+  select: { [K in keyof Required<Prisma.VideoSelect>]: true };
+}>;
 export default function VideoSelectionInterface() {
   const { id } = useParams();
 
