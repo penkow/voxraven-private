@@ -19,7 +19,7 @@ import {
   Video,
   VideoInsights,
   Synthesis,
-} from "../../../../../../voxraven-server-private/node_modules/@prisma/client";
+} from "@prisma/client";
 interface Message {
   id: number;
   text: string;

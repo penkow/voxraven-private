@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { Project } from "../../../../voxraven-server-private/node_modules/@prisma/client";
+import { Project } from "@prisma/client";
 
 export function NavMain({
   items,

@@ -7,7 +7,10 @@ import Image from "next/image";
 import InsightsItem from "./InsightsItem";
 import { InsightsDialog } from "./InsightsDialog";
 
-import {VideoFullType} from "../../../../../../voxraven-server-private/prisma/fulltypes"
+import { Prisma } from "@prisma/client";
+export type VideoFullType = Prisma.VideoGetPayload<{
+  select: { [K in keyof Required<Prisma.VideoSelect>]: true };
+}>;
 
 import { VideoHooksTimeline } from "./HooksTimeline";
 import VideoPlayer from "./VideoPlayer";
@@ -37,7 +40,6 @@ interface VideoItemProps {
   video: VideoFullType;
   onStartChat: (video: VideoFullType) => void;
 }
-
 
 export default function VideoItem({ video, onStartChat }: VideoItemProps) {
   const extractYoutubeVideoId = (url: string) => {

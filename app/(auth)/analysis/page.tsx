@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Youtube } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Project } from "../../../../voxraven-server-private/node_modules/@prisma/client";
+import { Project } from "@prisma/client";
 
 const AnalysisPage = () => {
   const [videoUrl, setVideoUrl] = useState("");

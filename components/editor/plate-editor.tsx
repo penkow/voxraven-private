@@ -17,7 +17,7 @@ import { toast } from "sonner";
 
 import { MarkdownPlugin, remarkMdx } from "@udecode/plate-markdown";
 
-import { Synthesis } from "../../../voxraven-server-private/node_modules/@prisma/client";
+import { Synthesis } from "@prisma/client";
 import { useDebounce } from "./use-debounce";
 
 interface PlateEditorProps {

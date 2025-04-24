@@ -18,7 +18,7 @@ import { useParams, useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
 
-import { Project } from "../../../../../voxraven-server-private/node_modules/@prisma/client";
+import { Project } from "@prisma/client";
 import { VideoFullType } from "../../../../../voxraven-server-private/prisma/fulltypes";
 
 export default function VideoSelectionInterface() {

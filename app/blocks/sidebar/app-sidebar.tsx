@@ -19,7 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 
-import { Project } from "../../../../voxraven-server-private/node_modules/@prisma/client";
+import { Project } from "@prisma/client";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
