@@ -146,12 +146,17 @@ export default function VideoItem({ video, onStartChat }: VideoItemProps) {
         </div>
 
         <div className="px-2">
-          {/* <VideoHooksTimeline
-            hooks={video.videoInsights[0].hooks}
+          <VideoHooksTimeline
+            hooks={
+              video.videoInsights[0]?.hooks &&
+              typeof video.videoInsights[0].hooks === "object"
+                ? (video.videoInsights[0].hooks as any).hooks
+                : []
+            }
             videoDuration={video.duration}
             jumpToSecond={jumpToTime}
             videoWatchProgress={videoWatchProgress}
-          /> */}
+          />
         </div>
       </div>
 

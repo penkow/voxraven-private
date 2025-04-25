@@ -40,7 +40,7 @@ export default function ChatContainer({
 
   const askVideo = async (question: string, videoId: string) => {
     setIsThinking(true);
-    const response = await fetch(`http://localhost:3000/api/agent/${videoId}/askVideo`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/agent/${videoId}/askVideo`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -44,7 +44,7 @@ export default function VideoSelectionInterface() {
   const router = useRouter();
 
   const handleGenerateSynthesis = async () => {
-    const response = await fetch(`http://localhost:3000/api/synthesis/${id}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/synthesis/${id}`, {
       method: "POST",
     });
 
@@ -57,7 +57,7 @@ export default function VideoSelectionInterface() {
     setIsAddingManual(true);
 
     const response = await fetch(
-      `http://localhost:3000/api/projects/${id}/videos`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/projects/${id}/videos`,
       {
         method: "POST",
         headers: {
@@ -78,13 +78,13 @@ export default function VideoSelectionInterface() {
   useEffect(() => {
     const fetchProject = async () => {
       const projectResponse = await fetch(
-        `http://localhost:3000/api/projects/${id}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/projects/${id}`
       );
       const project: Project = await projectResponse.json();
       setProject(project);
 
       const videosResponse = await fetch(
-        `http://localhost:3000/api/projects/${id}/videos`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/projects/${id}/videos`
       );
       const videos: VideoFullType[] = await videosResponse.json();
       setProjectVideos(videos);

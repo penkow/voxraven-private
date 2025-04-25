@@ -23,7 +23,7 @@ const AnalysisPage = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:3000/api/projects", {
+      const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/projects", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -40,7 +40,7 @@ export function PlateEditor({ projectId }: PlateEditorProps) {
   useEffect(() => {
     const updateSynthesis = async () => {
       try {
-        await fetch(`http://localhost:3000/api/synthesis/${projectId}`, {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/synthesis/${projectId}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -66,7 +66,7 @@ export function PlateEditor({ projectId }: PlateEditorProps) {
   useEffect(() => {
     const fetchProject = async () => {
       const synthesisResponse = await fetch(
-        `http://localhost:3000/api/projects/${projectId}/synthesis`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/projects/${projectId}/synthesis`
       );
       const synthesis: Synthesis = await synthesisResponse.json();
       const data = editor
