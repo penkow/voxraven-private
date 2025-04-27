@@ -41,7 +41,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         toast.success("Login successful");
         const user = await account.get();
         setUser(user);
-        router.push("/chat");
+        router.push("/analysis");
       },
       function (error) {
         toast.error("Login failed");

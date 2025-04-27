@@ -26,6 +26,9 @@ export type VideoFullType = Prisma.VideoGetPayload<{
 export default function VideoSelectionInterface() {
   const { id } = useParams();
 
+  const [isGeneratingSynthesis, setIsGeneratingSynthesis] =
+    useState<boolean>(false);
+
   // User Input
   const [selectedVideos, setSelectedVideos] = useState<any[]>([]);
   const [videoUrl, setVideoUrl] = useState("");
@@ -44,9 +47,14 @@ export default function VideoSelectionInterface() {
   const router = useRouter();
 
   const handleGenerateSynthesis = async () => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/synthesis/${id}`, {
-      method: "POST",
-    });
+    setIsGeneratingSynthesis(true);
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/synthesis/${id}`,
+      {
+        method: "POST",
+      }
+    );
+    setIsGeneratingSynthesis(false);
 
     router.push(`/insights/${id}`);
   };
@@ -110,9 +118,19 @@ export default function VideoSelectionInterface() {
                 size="sm"
                 className="bg-purple-700 hover:bg-purple-600 text-white"
                 onClick={handleGenerateSynthesis}
+                disabled={isGeneratingSynthesis}
               >
-                <Sparkles className="h-4 w-4" />
-                Generated Insights
+                {isGeneratingSynthesis ? (
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    <span>Generating idea...</span>
+                  </div>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4" />
+                    Video Idea Synthesis
+                  </>
+                )}
               </Button>
               <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <DialogTrigger asChild>
