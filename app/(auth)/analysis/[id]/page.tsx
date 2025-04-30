@@ -26,6 +26,21 @@ export type VideoFullType = Prisma.VideoGetPayload<{
 export default function VideoSelectionInterface() {
   const { id } = useParams();
 
+  const PROJECTS_ENDPOINT = new URL(
+    `api/projects/${id}`,
+    process.env.NEXT_PUBLIC_API_URL
+  );
+
+  const SYNTHESIS_ENDPOINT = new URL(
+    `api/synthesis/${id}`,
+    process.env.NEXT_PUBLIC_API_URL
+  );
+
+  const VIDEOS_ENDPOINT = new URL(
+    `api/projects/${id}/videos`,
+    process.env.NEXT_PUBLIC_API_URL
+  );
+
   const [isGeneratingSynthesis, setIsGeneratingSynthesis] =
     useState<boolean>(false);
 
@@ -48,15 +63,13 @@ export default function VideoSelectionInterface() {
 
   const handleGenerateSynthesis = async () => {
     setIsGeneratingSynthesis(true);
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/synthesis/${id}`,
-      {
-        method: "POST",
-      }
-    );
-    setIsGeneratingSynthesis(false);
+    const response = await fetch(SYNTHESIS_ENDPOINT, {
+      method: "POST",
+      credentials: "include",
+    });
 
     router.push(`/insights/${id}`);
+    setIsGeneratingSynthesis(false);
   };
 
   const handleAddVideo = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -64,16 +77,14 @@ export default function VideoSelectionInterface() {
 
     setIsAddingManual(true);
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/projects/${id}/videos`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ videoUrl: videoUrl }),
-      }
-    );
+    const response = await fetch(VIDEOS_ENDPOINT, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ videoUrl: videoUrl }),
+    });
 
     const videos: VideoFullType[] = await response.json();
 
@@ -85,15 +96,15 @@ export default function VideoSelectionInterface() {
 
   useEffect(() => {
     const fetchProject = async () => {
-      const projectResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/projects/${id}`
-      );
+      const projectResponse = await fetch(PROJECTS_ENDPOINT, {
+        credentials: "include",
+      });
       const project: Project = await projectResponse.json();
       setProject(project);
 
-      const videosResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/projects/${id}/videos`
-      );
+      const videosResponse = await fetch(VIDEOS_ENDPOINT, {
+        credentials: "include",
+      });
       const videos: VideoFullType[] = await videosResponse.json();
       setProjectVideos(videos);
     };

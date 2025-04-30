@@ -19,22 +19,28 @@ const AnalysisPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  const PROJECTS_ENDPOINT = new URL(
+    `api/projects`,
+    process.env.NEXT_PUBLIC_API_URL
+  );
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/projects", {
+      const response = await fetch(PROJECTS_ENDPOINT, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           videoUrl: videoUrl,
         }),
       });
       const data: Project = await response.json();
       console.log(data);
-      
+
       router.push(`/analysis/${data.id}`);
     } catch (error) {
       console.error("Error submitting video:", error);
@@ -74,8 +80,8 @@ const AnalysisPage = () => {
                   className="flex-1"
                   disabled={isLoading}
                 />
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={isLoading || !videoUrl}
                   className="min-w-[100px]"
                 >

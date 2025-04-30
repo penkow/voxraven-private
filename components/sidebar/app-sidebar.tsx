@@ -18,16 +18,22 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 
-
 import { Project } from "@prisma/client";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
   const [projects, setProjects] = useState<Project[] | null>(null);
 
+  const PROJECTS_ENDPOINT = new URL(
+    `api/projects`,
+    process.env.NEXT_PUBLIC_API_URL
+  );
+
   useEffect(() => {
     const fetchProjects = async () => {
-      const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/projects");
+      const response = await fetch(PROJECTS_ENDPOINT, {
+        credentials: "include",
+      });
       const data: Project[] = await response.json();
       setProjects(data);
     };

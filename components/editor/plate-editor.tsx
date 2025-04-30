@@ -12,9 +12,6 @@ import { Editor, EditorContainer } from "@/components/plate-ui/editor";
 import remarkEmoji from "remark-emoji";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import { useIsSaved } from "../../hooks/use-is-saved";
-
-import { toast } from "sonner";
 
 import { MarkdownPlugin, remarkMdx } from "@udecode/plate-markdown";
 
@@ -31,6 +28,11 @@ export function PlateEditor({ projectId }: PlateEditorProps) {
   const debouncedMarkdownValue = useDebounce(markdownValue, 500);
   const { setIsSaved } = useSaved();
 
+  const SYNTHESIS_ENDPOINT = new URL(
+    `api/synthesis/${projectId}`,
+    process.env.NEXT_PUBLIC_API_URL
+  );
+
   const editor = useCreateEditor();
 
   useEffect(() => {
@@ -40,18 +42,16 @@ export function PlateEditor({ projectId }: PlateEditorProps) {
   useEffect(() => {
     const updateSynthesis = async () => {
       try {
-        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/synthesis/${projectId}`, {
+        await fetch(SYNTHESIS_ENDPOINT, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify({
             synthesis: debouncedMarkdownValue,
           }),
         });
-        // toast.success("Success", {
-        //   description: "Changes saved remotely.",
-        // });
         setIsSaved(true);
       } catch (error) {
         console.error("Failed to update synthesis:", error);
@@ -65,9 +65,9 @@ export function PlateEditor({ projectId }: PlateEditorProps) {
 
   useEffect(() => {
     const fetchProject = async () => {
-      const synthesisResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/projects/${projectId}/synthesis`
-      );
+      const synthesisResponse = await fetch(SYNTHESIS_ENDPOINT, {
+        credentials: "include",
+      });
       const synthesis: Synthesis = await synthesisResponse.json();
       const data = editor
         .getApi(MarkdownPlugin)

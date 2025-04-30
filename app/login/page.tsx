@@ -2,8 +2,7 @@
 
 import type React from "react";
 
-import { Account, Client } from "appwrite";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -28,11 +27,13 @@ export default function NewPage() {
     password: "",
   });
 
-  const client = new Client();
-  client.setProject("67d071130009125872b1");
-  const account = new Account(client);
+  const { isAuthenticated, isLoading, login } = useAuth();
 
-  const { user, login, isLoading } = useAuth();
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/analysis");
+    }
+  }, [isAuthenticated, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -54,15 +55,6 @@ export default function NewPage() {
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>
-          {/* <p className="mt-2 text-sm text-gray-600">
-            Or{" "}
-            <Link
-              href="/signup"
-              className="font-medium text-primary hover:text-primary/90"
-            >
-              create a new account
-            </Link>
-          </p> */}
         </div>
 
         <Card>

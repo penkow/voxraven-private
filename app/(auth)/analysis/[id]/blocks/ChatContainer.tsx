@@ -14,12 +14,7 @@ import {
 } from "@/components/ui/card";
 import { MessageCircle, X, Send, Loader2 } from "lucide-react";
 import MarkdownRenderer from "@/components/ui/markdown-renderer";
-import {
-  Project,
-  Video,
-  VideoInsights,
-  Synthesis,
-} from "@prisma/client";
+import { Project, Video, VideoInsights, Synthesis } from "@prisma/client";
 interface Message {
   id: number;
   text: string;
@@ -39,12 +34,18 @@ export default function ChatContainer({
   const [isThinking, setIsThinking] = useState(false);
 
   const askVideo = async (question: string, videoId: string) => {
+    const VIDEO_CHAT_ENDPOINT = new URL(
+      `api/agent/${videoId}/askVideo`,
+      process.env.NEXT_PUBLIC_API_URL
+    );
+
     setIsThinking(true);
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/agent/${videoId}/askVideo`, {
+    const response = await fetch(VIDEO_CHAT_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({
         question: question,
         videoUrl: currentChatVideo?.url,
@@ -86,7 +87,6 @@ export default function ChatContainer({
     setInputValue("");
 
     const response = await askVideo(inputValue, currentChatVideo?.id || "");
-    console.log(response);
     const responseMessage: Message = {
       id: messages.length + 2,
       text: response.answer,
