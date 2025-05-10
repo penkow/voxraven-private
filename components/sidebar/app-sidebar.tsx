@@ -56,7 +56,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">VoxRaven</span>
-                  <span className="truncate text-xs">Alpha v0.1.2</span>
+                  <span className="truncate text-xs">Alpha v0.2.0</span>
                 </div>
               </a>
             </SidebarMenuButton>
