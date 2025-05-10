@@ -3,94 +3,113 @@ import { useRouter } from "next/navigation";
 import { Models } from "appwrite";
 import { toast } from "sonner";
 
+interface UserPayload {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  memberships: string[];
+}
+
 // Create AuthContext
 const AuthContext = createContext<{
-  user: any | null;
+  user: UserPayload | null;
   isLoading: boolean;
+  isAuthenticated: boolean;
   login: (username: string, password: string) => void;
   logout: () => void;
-  get_jwt: () => Promise<string>;
 }>({
   user: null,
   isLoading: true,
+  isAuthenticated: false,
   login: () => {},
   logout: () => {},
-  get_jwt: () => Promise.resolve(""),
 });
 
 import { ReactNode } from "react";
-import { Account, Client } from "appwrite";
-import { account } from "../appwrite";
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<any | null>(null);
-  const [isLoading, setisLoading] = useState(true);
-  const router = useRouter();
+  const [user, setUser] = useState<UserPayload | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const login = async (username: string, password: string) => {
-    setisLoading(true);
+  const USER_ENDPOINT = new URL("api/auth", process.env.NEXT_PUBLIC_API_URL);
 
-    const promise = account.createEmailPasswordSession(username, password);
+  const LOGOUT_ENDPOINT = new URL(
+    "api/auth/logout",
+    process.env.NEXT_PUBLIC_API_URL
+  );
 
-    promise.then(
-      async function (response) {
-        toast.success("Login successful");
-        const user = await account.get();
-        setUser(user);
-        router.push("/analysis");
+  const LOGIN_ENDPOINT = new URL(
+    "api/auth/login",
+    process.env.NEXT_PUBLIC_API_URL
+  );
+
+  const login = async (email: string, password: string) => {
+    setIsLoading(true);
+    const response = await fetch(LOGIN_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-      function (error) {
-        toast.error("Login failed");
-      }
-    );
+      body: JSON.stringify({ email, password }),
+      credentials: "include",
+    });
 
-    setTimeout(() => {
-      setisLoading(false);
-    }, 800);
-  };
-
-  const get_jwt = async () => {
-    const jwt = await account.createJWT();
-    return jwt.jwt;
-  };
-
-  const get_user = async () => {
-    try {
-      const user = await account.get();
-      return user;
-    } catch (error) {
-      return null;
+    if (response.status === 200) {
+      const user: UserPayload = await response.json();
+      setUser(user);
+      setIsLoading(false);
+      setIsAuthenticated(true);
+      toast.success("Login successful");
+    } else {
+      setUser(null);
+      setIsLoading(false);
+      setIsAuthenticated(false);
+      toast.error("Login failed");
     }
   };
 
   const logout = async () => {
-    setisLoading(true);
-    await account.deleteSession("current");
+    setIsLoading(true);
+    await fetch(LOGOUT_ENDPOINT, {
+      method: "POST",
+      credentials: "include",
+    });
     toast.success("Logout successful");
-    router.push("/login");
     setUser(null);
-    setTimeout(() => {
-      setisLoading(false);
-    }, 800);
+    setIsLoading(false);
+    setIsAuthenticated(false);
   };
 
   useEffect(() => {
     const fetchUser = async () => {
-      try {
-        const user = await account.get();
+      setIsLoading(true);
+
+      const response = await fetch(USER_ENDPOINT, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (response.status === 200) {
+        const user: UserPayload = await response.json();
         setUser(user);
-      } catch (error) {}
-      setisLoading(false);
+        setIsAuthenticated(true);
+      }
+
+      setIsLoading(false);
     };
     fetchUser();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, get_jwt }}>
+    <AuthContext.Provider
+      value={{ user, isLoading, isAuthenticated, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

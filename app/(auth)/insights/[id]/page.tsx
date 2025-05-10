@@ -11,7 +11,7 @@ export default function Page() {
 
   if (id) {
     return (
-      <div className="" data-registry="plate">
+      <div className="h-[900px]" data-registry="plate">
         <SavedProvider>
           <SettingsProvider>
             <PlateEditor projectId={id as string} />

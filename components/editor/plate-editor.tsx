@@ -12,9 +12,6 @@ import { Editor, EditorContainer } from "@/components/plate-ui/editor";
 import remarkEmoji from "remark-emoji";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import { useIsSaved } from "../../hooks/use-is-saved";
-
-import { toast } from "sonner";
 
 import { MarkdownPlugin, remarkMdx } from "@udecode/plate-markdown";
 
@@ -30,6 +27,12 @@ export function PlateEditor({ projectId }: PlateEditorProps) {
   const [markdownValue, setMarkdownValue] = useState("");
   const debouncedMarkdownValue = useDebounce(markdownValue, 500);
   const { setIsSaved } = useSaved();
+  const [isFetched, setIsFetched] = useState(false);
+
+  const SYNTHESIS_ENDPOINT = new URL(
+    `api/synthesis/${projectId}`,
+    process.env.NEXT_PUBLIC_API_URL
+  );
 
   const editor = useCreateEditor();
 
@@ -40,18 +43,17 @@ export function PlateEditor({ projectId }: PlateEditorProps) {
   useEffect(() => {
     const updateSynthesis = async () => {
       try {
-        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/synthesis/${projectId}`, {
+        const response = await fetch(SYNTHESIS_ENDPOINT, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify({
             synthesis: debouncedMarkdownValue,
           }),
         });
-        // toast.success("Success", {
-        //   description: "Changes saved remotely.",
-        // });
+        console.log(response.status);
         setIsSaved(true);
       } catch (error) {
         console.error("Failed to update synthesis:", error);
@@ -65,10 +67,11 @@ export function PlateEditor({ projectId }: PlateEditorProps) {
 
   useEffect(() => {
     const fetchProject = async () => {
-      const synthesisResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/projects/${projectId}/synthesis`
-      );
+      const synthesisResponse = await fetch(SYNTHESIS_ENDPOINT, {
+        credentials: "include",
+      });
       const synthesis: Synthesis = await synthesisResponse.json();
+
       const data = editor
         .getApi(MarkdownPlugin)
         .markdown.deserialize(synthesis.synthesis, {
@@ -76,19 +79,14 @@ export function PlateEditor({ projectId }: PlateEditorProps) {
         });
 
       editor.tf.setValue(data);
+      setIsFetched(true);
     };
     fetchProject();
   }, [projectId]);
 
-  // useEffect(() => {
-  //   const data = editor
-  //     .getApi(MarkdownPlugin)
-  //     .markdown.deserialize(markdownDemo, {
-  //       remarkPlugins: [remarkMath, remarkGfm, remarkMdx, remarkEmoji as any],
-  //     });
-
-  //   editor.tf.setValue(data);
-  // });
+  if (!isFetched) {
+    return <div>Loading...</div>; 
+  }
 
   return (
     <DndProvider backend={HTML5Backend}>

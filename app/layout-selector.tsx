@@ -3,7 +3,7 @@ import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { usePathname } from "next/navigation";
 import AuthGuard from "./(providers)/auth-guard";
 import { useAuth } from "./(providers)/auth-provider";
-import { AppSidebar } from "./blocks/sidebar/app-sidebar";
+import { AppSidebar } from "../components/sidebar/app-sidebar";
 import {
   SidebarInset,
   SidebarTrigger,

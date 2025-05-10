@@ -1,28 +1,27 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { ReactNode, useState } from "react";
 
-import { ReactNode } from "react";
 import { useAuth } from "./auth-provider";
 import Loading from "./loading";
 
 const AuthGuard = ({ children }: { children: ReactNode }) => {
-  const { user, isLoading } = useAuth();
+  const { isLoading, isAuthenticated } = useAuth();
   const router = useRouter();
 
-  const temporaryDisabled = false;
-
-  if (!temporaryDisabled) {
-    if (isLoading) {
-      return <Loading />; // Or your custom loading spinner
-    }
-
-    if (!user) {
+  useEffect(() => {
+    if (!isAuthenticated && !isLoading) {
       router.push("/login");
-      return null;
     }
-  };
+  }, [isAuthenticated, isLoading, router]);
 
-  return children; // If authenticated, render children
+  if (isAuthenticated) {
+    if (isLoading) {
+      return <Loading />;
+    } else {
+      return <>{children}</>;
+    }
+  }
 };
 
 export default AuthGuard;
