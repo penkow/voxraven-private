@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { Project } from "@prisma/client";
 
 const AnalysisPage = () => {
-  const [videoUrl, setVideoUrl] = useState("");
+  const [projectName, setProjectName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -35,7 +35,7 @@ const AnalysisPage = () => {
         },
         credentials: "include",
         body: JSON.stringify({
-          videoUrl: videoUrl,
+          title: projectName,
         }),
       });
       const data: Project = await response.json();
@@ -66,32 +66,31 @@ const AnalysisPage = () => {
               YouTube Video Analysis
             </CardTitle>
             <CardDescription>
-              Paste your YouTube video URL below to begin the analysis
+              Start by naming your video analysis project
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="flex gap-2">
                 <Input
-                  type="url"
-                  placeholder="https://www.youtube.com/watch?v=..."
-                  value={videoUrl}
-                  onChange={(e) => setVideoUrl(e.target.value)}
+                  placeholder="Enter the project name here..."
+                  value={projectName}
+                  onChange={(e) => setProjectName(e.target.value)}
                   className="flex-1"
                   disabled={isLoading}
                 />
                 <Button
                   type="submit"
-                  disabled={isLoading || !videoUrl}
+                  disabled={isLoading || !projectName}
                   className="min-w-[100px]"
                 >
                   {isLoading ? (
                     <div className="flex items-center gap-2">
                       <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                      <span>Analyzing...</span>
+                      <span>Creating...</span>
                     </div>
                   ) : (
-                    "Analyze"
+                    "Create Project"
                   )}
                 </Button>
               </div>

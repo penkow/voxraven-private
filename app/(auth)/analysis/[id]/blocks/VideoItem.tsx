@@ -119,28 +119,28 @@ export default function VideoItem({ video, onStartChat }: VideoItemProps) {
           <div className="w-auto">
             <InsightsItem
               title="Summary"
-              content={video.videoInsights[0].summary}
+              content={video.videoInsights[0]?.summary}
             />
           </div>
 
           <div className="w-auto">
             <InsightsItem
               title="Target Audience"
-              content={video.videoInsights[0].targetAudience}
+              content={video.videoInsights[0]?.targetAudience}
             />
           </div>
 
           <div className="w-auto">
             <InsightsItem
               title="Pain Points"
-              content={video.videoInsights[0].painPoints}
+              content={video.videoInsights[0]?.painPoints}
             />
           </div>
 
           <div className="w-auto">
             <InsightsItem
               title="Empathy Map"
-              content={video.videoInsights[0].empathyMap}
+              content={video.videoInsights[0]?.empathyMap}
             />
           </div>
         </div>
@@ -162,11 +162,11 @@ export default function VideoItem({ video, onStartChat }: VideoItemProps) {
 
       <div className="flex flex-col gap-2 justify-start items-center">
         <InsightsDialog
-          summary={video.videoInsights[0].summary}
-          targetAudience={video.videoInsights[0].targetAudience}
-          painPoints={video.videoInsights[0].painPoints}
-          empathyMap={video.videoInsights[0].empathyMap}
-          commentsAnalysis={video.videoInsights[0].commentsAnalysis}
+          summary={video.videoInsights[0]?.summary}
+          targetAudience={video.videoInsights[0]?.targetAudience}
+          painPoints={video.videoInsights[0]?.painPoints}
+          empathyMap={video.videoInsights[0]?.empathyMap}
+          commentsAnalysis={video.videoInsights[0]?.commentsAnalysis}
         />
 
         <Button

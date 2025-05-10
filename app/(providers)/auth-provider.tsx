@@ -37,10 +37,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const USER_ENDPOINT = new URL(
-    "api/auth",
-    process.env.NEXT_PUBLIC_API_URL
-  );
+  const USER_ENDPOINT = new URL("api/auth", process.env.NEXT_PUBLIC_API_URL);
 
   const LOGOUT_ENDPOINT = new URL(
     "api/auth/logout",

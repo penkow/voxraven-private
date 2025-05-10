@@ -27,6 +27,7 @@ export function PlateEditor({ projectId }: PlateEditorProps) {
   const [markdownValue, setMarkdownValue] = useState("");
   const debouncedMarkdownValue = useDebounce(markdownValue, 500);
   const { setIsSaved } = useSaved();
+  const [isFetched, setIsFetched] = useState(false);
 
   const SYNTHESIS_ENDPOINT = new URL(
     `api/synthesis/${projectId}`,
@@ -42,7 +43,7 @@ export function PlateEditor({ projectId }: PlateEditorProps) {
   useEffect(() => {
     const updateSynthesis = async () => {
       try {
-        await fetch(SYNTHESIS_ENDPOINT, {
+        const response = await fetch(SYNTHESIS_ENDPOINT, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -52,6 +53,7 @@ export function PlateEditor({ projectId }: PlateEditorProps) {
             synthesis: debouncedMarkdownValue,
           }),
         });
+        console.log(response.status);
         setIsSaved(true);
       } catch (error) {
         console.error("Failed to update synthesis:", error);
@@ -69,6 +71,7 @@ export function PlateEditor({ projectId }: PlateEditorProps) {
         credentials: "include",
       });
       const synthesis: Synthesis = await synthesisResponse.json();
+
       const data = editor
         .getApi(MarkdownPlugin)
         .markdown.deserialize(synthesis.synthesis, {
@@ -76,19 +79,14 @@ export function PlateEditor({ projectId }: PlateEditorProps) {
         });
 
       editor.tf.setValue(data);
+      setIsFetched(true);
     };
     fetchProject();
   }, [projectId]);
 
-  // useEffect(() => {
-  //   const data = editor
-  //     .getApi(MarkdownPlugin)
-  //     .markdown.deserialize(markdownDemo, {
-  //       remarkPlugins: [remarkMath, remarkGfm, remarkMdx, remarkEmoji as any],
-  //     });
-
-  //   editor.tf.setValue(data);
-  // });
+  if (!isFetched) {
+    return <div>Loading...</div>; 
+  }
 
   return (
     <DndProvider backend={HTML5Backend}>

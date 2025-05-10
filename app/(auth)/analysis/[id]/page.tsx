@@ -20,6 +20,7 @@ import { motion } from "framer-motion";
 
 import { Project } from "@prisma/client";
 import { Prisma } from "@prisma/client";
+import { LoadingAnimation } from "./blocks/LoadingAnimation";
 export type VideoFullType = Prisma.VideoGetPayload<{
   select: { [K in keyof Required<Prisma.VideoSelect>]: true };
 }>;
@@ -36,8 +37,13 @@ export default function VideoSelectionInterface() {
     process.env.NEXT_PUBLIC_API_URL
   );
 
+  // const VIDEOS_ENDPOINT = new URL(
+  //   `api/projects/${id}/videos`,
+  //   process.env.NEXT_PUBLIC_API_URL
+  // );
+
   const VIDEOS_ENDPOINT = new URL(
-    `api/projects/${id}/videos`,
+    `api/video/${id}`,
     process.env.NEXT_PUBLIC_API_URL
   );
 
@@ -45,7 +51,6 @@ export default function VideoSelectionInterface() {
     useState<boolean>(false);
 
   // User Input
-  const [selectedVideos, setSelectedVideos] = useState<any[]>([]);
   const [videoUrl, setVideoUrl] = useState("");
 
   // Retrieved Data
@@ -83,7 +88,7 @@ export default function VideoSelectionInterface() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ videoUrl: videoUrl }),
+      body: JSON.stringify({ videoUrl: videoUrl, projectId: id }),
     });
 
     const videos: VideoFullType[] = await response.json();
@@ -121,7 +126,7 @@ export default function VideoSelectionInterface() {
       <div className="flex-1 relative transition-all duration-300 ease-in-out">
         <div className="space-y-2 p-4 overflow-y-auto h-[900px]">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-medium">
+            <h2 className="text-2xl font-medium">
               {project?.title || "Loading..."}
             </h2>
             <div className="flex gap-2">
@@ -161,6 +166,16 @@ export default function VideoSelectionInterface() {
                       value={videoUrl}
                       onChange={(e) => setVideoUrl(e.target.value)}
                       required
+                      disabled={isAddingManual}
+                    />
+                    <LoadingAnimation
+                      messages={[
+                        "Fetching video transcript...",
+                        "Analyzing video content...",
+                        "Extracting insights...",
+                        "Finding viewer interests...",
+                      ]}
+                      hidden={isAddingManual}
                     />
                     <Button type="submit" disabled={isAddingManual}>
                       {isAddingManual ? (
@@ -177,13 +192,38 @@ export default function VideoSelectionInterface() {
               </Dialog>
             </div>
           </div>
-          {projectVideos.map((video) => (
+          {/* {projectVideos.map((video) => (
             <VideoItem
               key={video.id}
               video={video}
               onStartChat={handleStartChat}
             />
-          ))}
+          ))} */}
+          {projectVideos.length > 0 ? (
+            projectVideos.map((video) => (
+              <VideoItem
+                key={video.id}
+                video={video}
+                onStartChat={handleStartChat}
+              />
+            ))
+          ) : (
+            <>
+              <div className="flex flex-col text-center text-muted-foreground mt-36">
+                <div>No videos added yet.</div>
+                <div className="mt-4">
+                  <Button
+                    type="submit"
+                    disabled={isAddingManual}
+                    onClick={() => setIsModalOpen(true)}
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Video
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
