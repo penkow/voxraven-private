@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "../(providers)/auth-provider";
+import { useProjects } from "../(providers)/projects-provider";
 
 export default function NewPage() {
   const router = useRouter();
@@ -28,10 +29,13 @@ export default function NewPage() {
   });
 
   const { isAuthenticated, isLoading, login } = useAuth();
+  const { fetchProjects } = useProjects();
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push("/analysis");
+      fetchProjects().then(() => {
+        router.push("/analysis");
+      });
     }
   }, [isAuthenticated, router]);
 

@@ -13,35 +13,25 @@ import {
 import { Youtube } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Project } from "@prisma/client";
+import { useProjects } from "@/app/(providers)/projects-provider";
 
 const AnalysisPage = () => {
   const [projectName, setProjectName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { createProject } = useProjects();
   const router = useRouter();
-
-  const PROJECTS_ENDPOINT = new URL(
-    `api/projects`,
-    process.env.NEXT_PUBLIC_API_URL
-  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch(PROJECTS_ENDPOINT, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          title: projectName,
-        }),
-      });
-      const data: Project = await response.json();
-      console.log(data);
+      const project = await createProject(projectName);
 
-      router.push(`/analysis/${data.id}`);
+      if (!project) {
+        throw new Error("Failed to create project");
+      }
+
+      router.push(`/analysis/${project.id}`);
     } catch (error) {
       console.error("Error submitting video:", error);
     } finally {
@@ -66,7 +56,7 @@ const AnalysisPage = () => {
               YouTube Video Analysis
             </CardTitle>
             <CardDescription>
-              Start by naming your video analysis project
+              Start by naming your project
             </CardDescription>
           </CardHeader>
           <CardContent>

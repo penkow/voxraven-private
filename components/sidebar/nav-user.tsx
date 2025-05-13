@@ -4,9 +4,7 @@ import {
   BadgeCheck,
   Bell,
   ChevronsUpDown,
-  CreditCard,
   LogOut,
-  Sparkles,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -93,7 +91,7 @@ export function NavUser() {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                {user?.memberships.includes("PRO") ? <ProBadge /> : <DefaultBadge />}
+                {user?.membership === "PRO" ? <ProBadge /> : <DefaultBadge />}
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">{user?.firstName+ " " + user?.lastName}</span>
                   <span className="truncate text-xs">{user?.email}</span>

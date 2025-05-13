@@ -1,6 +1,4 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Models } from "appwrite";
 import { toast } from "sonner";
 
 interface UserPayload {
@@ -8,7 +6,10 @@ interface UserPayload {
   email: string;
   firstName: string;
   lastName: string;
-  memberships: string[];
+  membership: string;
+  totalCredits: number;
+  usedCredits: number;
+  bonusCredits: number;
 }
 
 // Create AuthContext

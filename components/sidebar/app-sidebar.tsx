@@ -1,11 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { useEffect, useState } from "react";
 import { Bird } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { NavMain } from "./nav-main";
-import { NavSecondary } from "./nav-secondary";
 import { NavUser } from "./nav-user";
 import {
   Sidebar,
@@ -18,28 +16,10 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 
-import { Project } from "@prisma/client";
+import { CreditsCard } from "./credits-card";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
-  const [projects, setProjects] = useState<Project[] | null>(null);
-
-  const PROJECTS_ENDPOINT = new URL(
-    `api/projects`,
-    process.env.NEXT_PUBLIC_API_URL
-  );
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      const response = await fetch(PROJECTS_ENDPOINT, {
-        credentials: "include",
-      });
-      const data: Project[] = await response.json();
-      setProjects(data);
-    };
-    fetchProjects();
-  }, []);
-
   const handleNewAnalysis = async () => {
     router.push(`/analysis`);
   };
@@ -56,7 +36,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">VoxRaven</span>
-                  <span className="truncate text-xs">Alpha v0.2.0</span>
+                  <span className="truncate text-xs">Alpha v0.3.0</span>
                 </div>
               </a>
             </SidebarMenuButton>
@@ -75,10 +55,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <div className="overflow-y-auto">
-          <NavMain items={projects} />
+          <NavMain />
         </div>
       </SidebarContent>
       <SidebarFooter>
+        <div className="px-2 pb-2">
+          <CreditsCard />
+        </div>
         <NavUser />
       </SidebarFooter>
     </Sidebar>

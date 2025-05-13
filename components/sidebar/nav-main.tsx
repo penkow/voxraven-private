@@ -1,11 +1,9 @@
 "use client";
 
-import { ChevronRight, type LucideIcon } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 import {
   Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import {
   SidebarGroup,
@@ -14,20 +12,85 @@ import {
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useProjects } from "@/app/(providers)/projects-provider";
+import { Loader2 } from "lucide-react";
 
-import { Project } from "@prisma/client";
 
-export function NavMain({
-  items,
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+function SideMenuDialog({
+  isOpen,
+  setAlertIsOpen,
+  projectId,
 }: {
-  items: Project[] | null;
+  isOpen: boolean;
+  setAlertIsOpen: (isOpen: boolean) => void;
+  projectId: string;
 }) {
-  if (items === null || items === undefined) {
+  const { deleteProject } = useProjects();
+  const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setAlertIsOpen}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Confirm Deletion</DialogTitle>
+          <DialogDescription>
+            Are you sure you want to delete this project? This action cannot be
+            undone.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="sm:justify-end">
+          {!isDeleting && (
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                Cancel
+              </Button>
+            </DialogClose>
+          )}
+          <Button
+            type="button"
+            variant="destructive"
+            disabled={isDeleting}
+            onClick={async () => {
+              setIsDeleting(true);
+              setTimeout(async () => {
+                await deleteProject(projectId);
+                setAlertIsOpen(false);
+                router.push("/analysis");
+                setIsDeleting(false);
+              }, 2000);
+            }}
+          >
+            {isDeleting && <Loader2 className="h-4 w-4 animate-spin" />}
+            Delete
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export function NavMain() {
+  const { projects } = useProjects();
+  const [alertIsOpen, setAlertIsOpen] = useState(false);
+  const [deleteProjectId, setDeleteProjectId] = useState<string>("");
+
+  if (projects === null || projects === undefined) {
     return (
       <SidebarGroup>
         <SidebarGroupLabel>Analyses</SidebarGroupLabel>
@@ -43,21 +106,38 @@ export function NavMain({
   }
 
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel>Analyses</SidebarGroupLabel>
-      <SidebarMenu>
-        {items?.map((item) => (
-          <Collapsible key={item.id} asChild defaultOpen={false}>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip={item.title}>
-                <a href={`/analysis/${item.id}`}>
-                  <span>{item.title}</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </Collapsible>
-        ))}
-      </SidebarMenu>
-    </SidebarGroup>
+    <>
+      <SidebarGroup>
+        <SidebarGroupLabel>Analyses</SidebarGroupLabel>
+        <SidebarMenu>
+          {projects?.map((item) => (
+            <Collapsible key={item.id} asChild defaultOpen={false}>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip={item.title}>
+                  <a href={`/analysis/${item.id}`}>
+                    <span>{item.title}</span>
+                  </a>
+                </SidebarMenuButton>
+                <SidebarMenuAction
+                  showOnHover
+                  onClick={() => {
+                    setDeleteProjectId(item.id);
+                    setAlertIsOpen(true);
+                    //deleteProject(item.id);
+                  }}
+                >
+                  <Trash2 /> <span className="sr-only">Delete Project</span>
+                </SidebarMenuAction>
+              </SidebarMenuItem>
+            </Collapsible>
+          ))}
+        </SidebarMenu>
+      </SidebarGroup>
+      <SideMenuDialog
+        isOpen={alertIsOpen}
+        projectId={deleteProjectId}
+        setAlertIsOpen={setAlertIsOpen}
+      />
+    </>
   );
 }
