@@ -63,6 +63,7 @@ export default function VideoSelectionInterface() {
   const [isAddingManual, setIsAddingManual] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [hasSynthesis, setHasSynthesis] = useState(false);
 
   const router = useRouter();
 
@@ -99,6 +100,10 @@ export default function VideoSelectionInterface() {
     setVideoUrl("");
   };
 
+  const viewSynthesis = async () => {
+    router.push(`/insights/${id}`);
+  };
+
   useEffect(() => {
     const fetchProject = async () => {
       const projectResponse = await fetch(PROJECTS_ENDPOINT, {
@@ -112,6 +117,17 @@ export default function VideoSelectionInterface() {
       });
       const videos: VideoFullType[] = await videosResponse.json();
       setProjectVideos(videos);
+
+      const synthesisResponse = await fetch(SYNTHESIS_ENDPOINT, {
+        credentials: "include",
+      });
+      const synthesis = await synthesisResponse.json();
+
+      if (synthesis) {
+        setHasSynthesis(true);
+      } else {
+        setHasSynthesis(false);
+      }
     };
     fetchProject();
   }, []);
@@ -136,15 +152,29 @@ export default function VideoSelectionInterface() {
                 onClick={handleGenerateSynthesis}
                 disabled={isGeneratingSynthesis}
               >
-                {isGeneratingSynthesis ? (
-                  <div className="flex items-center gap-2">
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                    <span>Generating idea...</span>
-                  </div>
+                {hasSynthesis ? (
+                  <>
+                    {isGeneratingSynthesis ? (
+                      <div className="flex items-center gap-2">
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                        <span>Generating idea...</span>
+                      </div>
+                    ) : (
+                      <>
+                        <Sparkles className="h-4 w-4" />
+                        Video Idea Synthesis
+                      </>
+                    )}{" "}
+                  </>
                 ) : (
                   <>
-                    <Sparkles className="h-4 w-4" />
-                    Video Idea Synthesis
+                    <Button
+                      size="sm"
+                      className="bg-purple-700 hover:bg-purple-600 text-white"
+                      onClick={viewSynthesis}
+                    >
+                      View Synthesis
+                    </Button>
                   </>
                 )}
               </Button>
