@@ -116,11 +116,9 @@ export default function VideoPlayer({
       });
     };
 
-    initPlayer();
-
     // Small delay to ensure DOM is ready
-    // const timer = setTimeout(initPlayer, 1000);
-    // return () => clearTimeout(timer);
+    const timer = setTimeout(initPlayer, 1000);
+    return () => clearTimeout(timer);
   }, [videoId]);
 
   return (

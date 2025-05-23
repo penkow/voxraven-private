@@ -21,7 +21,6 @@ import { motion } from "framer-motion";
 import { Project } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { LoadingAnimation } from "./blocks/LoadingAnimation";
-import { ScrollArea } from "@/components/ui/scroll-area";
 export type VideoFullType = Prisma.VideoGetPayload<{
   select: { [K in keyof Required<Prisma.VideoSelect>]: true };
 }>;
@@ -139,137 +138,126 @@ export default function VideoSelectionInterface() {
   };
 
   return (
-    <>
-      <div className="flex flex-col w-full h-[calc(100vh-18px)]">
-        {/* Green div - fixed height header */}
-        {/* <div className="w-full h-[50px] min-h-[50px] border-black border rounded-md flex items-center justify-center"> */}
-        <div className="flex justify-between items-center p-4 border-b border-slate-100">
-          <h2 className="text-2xl font-medium">
-            {project?.title || "Loading..."}
-          </h2>
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              className="bg-purple-700 hover:bg-purple-600 text-white"
-              onClick={handleGenerateSynthesis}
-              disabled={isGeneratingSynthesis}
-            >
-              {hasSynthesis ? (
-                <>
-                  {isGeneratingSynthesis ? (
-                    <div className="flex items-center gap-2">
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                      <span>Generating idea...</span>
-                    </div>
-                  ) : (
-                    <>
-                      <Sparkles className="h-4 w-4" />
-                      Video Idea Synthesis
-                    </>
-                  )}{" "}
-                </>
-              ) : (
-                <>
-                  <Button
-                    size="sm"
-                    className="bg-purple-700 hover:bg-purple-600 text-white"
-                    onClick={viewSynthesis}
-                  >
-                    View Synthesis
-                  </Button>
-                </>
-              )}
-            </Button>
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-              <DialogTrigger asChild>
-                <Button size="sm">
-                  <Plus className="h-4 w-4" />
-                  Add Video
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add YouTube Video</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleAddVideo} className="space-y-4">
-                  <Input
-                    type="url"
-                    placeholder="Enter YouTube URL"
-                    value={videoUrl}
-                    onChange={(e) => setVideoUrl(e.target.value)}
-                    required
-                    disabled={isAddingManual}
-                  />
-                  <LoadingAnimation
-                    messages={[
-                      "Fetching video transcript...",
-                      "Analyzing video content...",
-                      "Extracting insights...",
-                      "Finding viewer interests...",
-                    ]}
-                    hidden={isAddingManual}
-                  />
-                  <Button type="submit" disabled={isAddingManual}>
-                    {isAddingManual ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Adding...
-                      </>
+    <div className="flex">
+      <div className="transition-all duration-300 ease-in-out">
+        <div className="space-y-2 p-4 overflow-y-auto">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-medium">
+              {project?.title || "Loading..."}
+            </h2>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                className="bg-purple-700 hover:bg-purple-600 text-white"
+                onClick={handleGenerateSynthesis}
+                disabled={isGeneratingSynthesis}
+              >
+                {hasSynthesis ? (
+                  <>
+                    {isGeneratingSynthesis ? (
+                      <div className="flex items-center gap-2">
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                        <span>Generating idea...</span>
+                      </div>
                     ) : (
-                      "Add Video"
-                    )}
-                  </Button>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </div>
-        {/* </div> */}
-
-        {/* Red div - scrollable content area */}
-        <div className="flex-1 w-full overflow-hidden">
-          <ScrollArea className="h-full w-full">
-            <div className="p-4">
-              <div className="space-y-4">
-                {projectVideos.length > 0 ? (
-                  projectVideos.map((video) => (
-                    <VideoItem
-                      key={video.id}
-                      video={video}
-                      onStartChat={handleStartChat}
-                    />
-                  ))
+                      <>
+                        <Sparkles className="h-4 w-4" />
+                        Video Idea Synthesis
+                      </>
+                    )}{" "}
+                  </>
                 ) : (
                   <>
-                    <div className="flex flex-col text-center text-muted-foreground mt-36">
-                      <div>No videos added yet.</div>
-                      <div className="mt-4">
-                        <Button
-                          type="submit"
-                          disabled={isAddingManual}
-                          onClick={() => setIsModalOpen(true)}
-                        >
-                          <Plus className="h-4 w-4" />
-                          Add Video
-                        </Button>
-                      </div>
-                    </div>
+                    <Button
+                      size="sm"
+                      className="bg-purple-700 hover:bg-purple-600 text-white"
+                      onClick={viewSynthesis}
+                    >
+                      View Synthesis
+                    </Button>
                   </>
                 )}
-              </div>
+              </Button>
+              <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                <DialogTrigger asChild>
+                  <Button size="sm">
+                    <Plus className="h-4 w-4" />
+                    Add Video
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add YouTube Video</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleAddVideo} className="space-y-4">
+                    <Input
+                      type="url"
+                      placeholder="Enter YouTube URL"
+                      value={videoUrl}
+                      onChange={(e) => setVideoUrl(e.target.value)}
+                      required
+                      disabled={isAddingManual}
+                    />
+                    <LoadingAnimation
+                      messages={[
+                        "Fetching video transcript...",
+                        "Analyzing video content...",
+                        "Extracting insights...",
+                        "Finding viewer interests...",
+                      ]}
+                      hidden={isAddingManual}
+                    />
+                    <Button type="submit" disabled={isAddingManual}>
+                      {isAddingManual ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Adding...
+                        </>
+                      ) : (
+                        "Add Video"
+                      )}
+                    </Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
-          </ScrollArea>
-        </div>
-
-        {/* Blue div - fixed height footer */}
-        <div className="w-full h-[30px] min-h-[30px] bg-blue-100 border border-blue-300 flex items-center justify-center">
-          <span className="text-blue-800 font-medium text-xs">
-            Blue Footer (Fixed Height)
-          </span>
+          </div>
+          {/* {projectVideos.map((video) => (
+            <VideoItem
+              key={video.id}
+              video={video}
+              onStartChat={handleStartChat}
+            />
+          ))} */}
+          {projectVideos.length > 0 ? (
+            projectVideos.map((video) => (
+              <VideoItem
+                key={video.id}
+                video={video}
+                onStartChat={handleStartChat}
+              />
+            ))
+          ) : (
+            <>
+              <div className="flex flex-col text-center text-muted-foreground mt-36">
+                <div>No videos added yet.</div>
+                <div className="mt-4">
+                  <Button
+                    type="submit"
+                    disabled={isAddingManual}
+                    onClick={() => setIsModalOpen(true)}
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Video
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
-      {/* <AnimatePresence mode="popLayout">
+      <AnimatePresence mode="popLayout">
         {isChatOpen && (
           <motion.div
             className="w-96 border-l border-gray-200"
@@ -301,7 +289,7 @@ export default function VideoSelectionInterface() {
             </div>
           </motion.div>
         )}
-      </AnimatePresence> */}
-    </>
+      </AnimatePresence>
+    </div>
   );
 }

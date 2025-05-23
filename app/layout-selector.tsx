@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
+import path from "path";
 
 export default function LayoutSelector({
   children,
@@ -61,11 +62,7 @@ export default function LayoutSelector({
           <TooltipProvider>
             <SidebarProvider>
               <AppSidebar />
-              <SidebarInset className="p-0 m-0">
-                <div className="flex flex-1 flex-col gap-4">
-                  {children}
-                </div>
-              </SidebarInset>
+              <SidebarInset className="p-0 m-0">{children}</SidebarInset>
             </SidebarProvider>
           </TooltipProvider>
         </AuthGuard>
