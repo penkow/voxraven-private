@@ -40,6 +40,11 @@ export function FlexTabs() {
     videoId: "sladura",
   });
 
+  const AI_CHAT_API = new URL(
+    `api/ai/chat`,
+    process.env.NEXT_PUBLIC_API_URL
+  );
+
   const {
     messages,
     input,
@@ -51,7 +56,7 @@ export function FlexTabs() {
     setMessages,
   } = useChat({
     //api: "/api/chat",
-    api: "http://localhost:3000/api/ai/chat",
+    api: AI_CHAT_API.toString(),
     credentials: "include",
     // body: {
     //   model: selectedModel,
