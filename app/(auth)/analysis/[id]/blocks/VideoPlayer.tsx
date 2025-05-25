@@ -39,17 +39,6 @@ export default function VideoPlayer({
     }
   }, [currentTime, playerRef.current]);
 
-  // //useffect update current time
-  // useEffect(() => {
-  //   // run every 1000ms
-  //   const interval = setInterval(() => {
-  //     if (playerRef.current) {
-  //       playerTimeCallback(playerRef.current.getCurrentTime());
-  //     }
-  //   }, 1000);
-  //   return () => clearInterval(interval);
-  // }, []);
-
   // Load YouTube API
   useEffect(() => {
     // Only load the API once
@@ -101,17 +90,19 @@ export default function VideoPlayer({
                   playerTimeCallback(playerRef.current.getCurrentTime());
                 }
               }, 100); // More frequent updates for smoother progress tracking
-              
+
               // Store interval ID to clear it later
               playerRef.current._timeUpdateInterval = interval;
-            } else if (event.data === window.YT.PlayerState.PAUSED || 
-                      event.data === window.YT.PlayerState.ENDED) {
+            } else if (
+              event.data === window.YT.PlayerState.PAUSED ||
+              event.data === window.YT.PlayerState.ENDED
+            ) {
               // Clear interval when video is paused or ended
               if (playerRef.current._timeUpdateInterval) {
                 clearInterval(playerRef.current._timeUpdateInterval);
               }
             }
-          }
+          },
         },
       });
     };

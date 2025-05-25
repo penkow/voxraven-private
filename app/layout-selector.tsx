@@ -62,7 +62,7 @@ export default function LayoutSelector({
           <TooltipProvider>
             <SidebarProvider>
               <AppSidebar />
-              <SidebarInset className="p-0 m-0">{children}</SidebarInset>
+              <SidebarInset>{children}</SidebarInset>
             </SidebarProvider>
           </TooltipProvider>
         </AuthGuard>

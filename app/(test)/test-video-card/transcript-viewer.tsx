@@ -1,9 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Play, Pause, RotateCcw } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
 // Mock transcript data with timestamps
@@ -160,7 +157,7 @@ export default function TranscriptViewer() {
   };
 
   return (
-    <div className="max-h-[400px] overflow-y-auto rounded-md border p-2">
+    <div className="overflow-y-auto rounded-md border p-2">
       {mockTranscript.map((segment) => (
         <div
           key={segment.id}
@@ -168,7 +165,7 @@ export default function TranscriptViewer() {
             if (el) segmentRefs.current.set(segment.id, el);
           }}
           className={cn(
-            "mb-3 rounded-md p-3 transition-colors duration-300",
+            "mb-1 rounded-md p-3 transition-colors duration-300",
             currentSegmentId === segment.id
               ? "bg-primary/10 shadow-sm"
               : "bg-background hover:bg-muted/50"

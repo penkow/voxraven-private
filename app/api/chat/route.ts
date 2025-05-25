@@ -8,8 +8,8 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const openAiProvider = createOpenAI({
-    apiKey:
- });
+    apiKey: "",
+  });
 
   const model = openAiProvider.languageModel("gpt-4.1-nano");
 
