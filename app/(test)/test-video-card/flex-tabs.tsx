@@ -52,6 +52,7 @@ export function FlexTabs() {
   } = useChat({
     //api: "/api/chat",
     api: "http://localhost:3000/api/ai/chat",
+    credentials: "include",
     // body: {
     //   model: selectedModel,
     // },
