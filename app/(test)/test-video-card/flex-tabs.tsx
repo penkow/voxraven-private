@@ -7,6 +7,7 @@ import { useState } from "react";
 import {
   AlertTriangle,
   BarChart3,
+  Box,
   FileText,
   MessageCircle,
   Users,
@@ -26,24 +27,12 @@ interface TabItem {
 export function FlexTabs() {
   const [activeTab, setActiveTab] = useState("chat");
 
-  const {
-    description,
-    summary,
-    views,
-    likes,
-    commentsCount,
-    commentsAnalysis,
-    painPoints,
-    targetAudience,
-    transcript,
-  } = useYoutubeVideo({
-    videoId: "sladura",
-  });
+  const { summary, commentsAnalysis, painPoints, targetAudience, transcript } =
+    useYoutubeVideo({
+      videoId: "sladura",
+    });
 
-  const AI_CHAT_API = new URL(
-    `api/ai/chat`,
-    process.env.NEXT_PUBLIC_API_URL
-  );
+  const AI_CHAT_API = new URL(`api/ai/chat`, process.env.NEXT_PUBLIC_API_URL);
 
   const {
     messages,
@@ -136,6 +125,17 @@ export function FlexTabs() {
       content: (
         <div className="p-6 bg-card rounded-lg border">
           <h3 className="text-xl font-semibold mb-4">Comments Analysis</h3>
+          <p className="text-muted-foreground">{commentsAnalysis}</p>
+        </div>
+      ),
+    },
+    {
+      id: "artifacts",
+      label: "Artifacts",
+      icon: <Box className="h-4 w-4" />,
+      content: (
+        <div className="p-6 bg-card rounded-lg border">
+          <h3 className="text-xl font-semibold mb-4">Artifacts</h3>
           <p className="text-muted-foreground">{commentsAnalysis}</p>
         </div>
       ),

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { FlexTabs } from "./flex-tabs";
 
 export default function ResponsiveLayout() {
-  const { description, summary, views, likes, commentsAnalysis, transcript } =
+  const { description, views, likes, commentsCount, transcript } =
     useYoutubeVideo({
       videoId: "sladura",
     });
@@ -15,8 +15,8 @@ export default function ResponsiveLayout() {
   return (
     <div className="w-full h-[calc(100vh-1rem)] flex p-4 gap-4">
       <div className="w-1/2 flex flex-col">
-        <div className="flex gap-2">
-          <div className="p-4 border border-slate-200 rounded-lg w-1/2">
+        <div className="flex gap-2 flex-col md:flex-row">
+          <div className="p-4 border border-slate-200 rounded-lg md:w-1/2">
             <VideoPlayer
               videoId={"b9AKDd68-_c"}
               currentTime={0}
@@ -25,19 +25,19 @@ export default function ResponsiveLayout() {
             <div className="flex items-center gap-4 justify-center mt-3 mx-2 text-xs">
               <div className="flex items-center gap-2">
                 <ThumbsUp className="h-4 w-4" />
-                <span>775,419</span>
+                <span>{likes}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Eye className="h-4 w-4" />
-                <span>123,124</span>
+                <span>{views}</span>
               </div>
               <div className="flex items-center gap-2">
                 <MessageSquare className="h-4 w-4" />
-                <span>42,424,242</span>
+                <span>{commentsCount}</span>
               </div>
             </div>
           </div>
-          <div className="w-1/2 p-4 border border-slate-200 rounded-lg text-sm flex flex-col gap-2">
+          <div className="md:w-1/2 p-4 border border-slate-200 rounded-lg text-sm flex flex-col gap-2">
             <div className="font-bold">Description</div>
             <div>{description}</div>
             <div>
@@ -47,7 +47,7 @@ export default function ResponsiveLayout() {
           </div>
         </div>
         <div className="font-bold text-sm">Transcript:</div>
-        <TranscriptViewer />
+        <TranscriptViewer transcript={transcript} currentSegmentId={7} />
       </div>
 
       <div className="w-1/2 flex">
