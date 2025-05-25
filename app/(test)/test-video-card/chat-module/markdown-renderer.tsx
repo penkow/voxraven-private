@@ -196,7 +196,7 @@
 // export default MarkdownRenderer
 
 "use client"
-import React, { Suspense } from "react"
+import React, { JSX, Suspense } from "react"
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 
@@ -380,11 +380,10 @@ const COMPONENTS = {
   hr: withClass("hr", "border-foreground/20"),
 }
 
-function withClass(Tag: keyof JSX.IntrinsicElements, classes: string) {
-  const Component = ({ node, ...props }: any) => (
-    <Tag className={classes} {...props} />
-  )
-  Component.displayName = Tag
+function withClass<TagName extends keyof JSX.IntrinsicElements>(Tag: TagName, classes: string) {
+  const Component = ({ node, ...props }: any) =>
+    React.createElement(Tag as string, { className: classes, ...props })
+  Component.displayName = typeof Tag === "string" ? Tag : undefined
   return Component
 }
 

@@ -26,7 +26,6 @@ interface TabItem {
 export function FlexTabs() {
   const [activeTab, setActiveTab] = useState("chat");
 
-
   const {
     description,
     summary,
@@ -40,7 +39,6 @@ export function FlexTabs() {
   } = useYoutubeVideo({
     videoId: "sladura",
   });
-
 
   const {
     messages,
@@ -73,7 +71,7 @@ export function FlexTabs() {
       icon: <MessageCircle className="h-4 w-4" />,
       content: (
         <Chat
-          messages={messages}
+          messages={messages as any}
           handleSubmit={handleSubmit}
           className="border border-slate-200 px-4 pb-4 rounded-lg overflow-auto"
           input={input}
@@ -83,11 +81,12 @@ export function FlexTabs() {
           append={append}
           setMessages={setMessages}
           // transcribeAudio={transcribeAudio}
-          //   suggestions={[
-          //     "What is the weather in San Francisco?",
-          //     "Explain step-by-step how to solve this math problem: If x² + 6x + 9 = 25, what is x?",
-          //     "Design a simple algorithm to find the longest palindrome in a string.",
-          //   ]}
+          suggestions={[]}
+          // {[
+          //   "What is the weather in San Francisco?",
+          //   "Explain step-by-step how to solve this math problem: If x² + 6x + 9 = 25, what is x?",
+          //   "Design a simple algorithm to find the longest palindrome in a string.",
+          // ]}
         />
       ),
     },
