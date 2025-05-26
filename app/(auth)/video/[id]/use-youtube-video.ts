@@ -1,6 +1,5 @@
-import { set } from "date-fns";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 
 export interface TranscriptSegment {
   id: number;
@@ -49,12 +48,22 @@ export function useYoutubeVideo({ videoId }: UseYoutubeVideoProps) {
         },
       });
 
+      const socket = io(process.env.NEXT_PUBLIC_SOCKET_IO_URL);
+
+      socket.on("videoData", (msg) => {
+        console.log("Received video data update:", msg);
+      });
+
       const videoData: VideoData = await response.json();
       setDescription(videoData.description);
       setViews(videoData.viewsCount);
       setLikes(videoData.likesCount);
       setCommentsCount(videoData.commentsCount);
       setTranscript(videoData.transcript);
+
+      return () => {
+        socket.disconnect();
+      };
     };
 
     fetchVideoData();
