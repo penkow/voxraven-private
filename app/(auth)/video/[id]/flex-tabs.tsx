@@ -24,12 +24,12 @@ interface TabItem {
   content: React.ReactNode;
 }
 
-export function FlexTabs() {
+export function FlexTabs({ videoId }: { videoId: string }) {
   const [activeTab, setActiveTab] = useState("chat");
 
   const { summary, commentsAnalysis, painPoints, targetAudience, transcript } =
     useYoutubeVideo({
-      videoId: "TAJMdcETH5k",
+      videoId: videoId,
     });
 
   const AI_CHAT_API = new URL(`api/ai/chat`, process.env.NEXT_PUBLIC_API_URL);
@@ -44,22 +44,14 @@ export function FlexTabs() {
     status,
     setMessages,
   } = useChat({
-    //api: "/api/chat",
     api: AI_CHAT_API.toString(),
     credentials: "include",
-    // body: {
-    //   model: selectedModel,
-    // },
+    body: {
+      videoId: videoId,
+    },
   });
 
   const tabs: TabItem[] = [
-    // {
-    //   id: "overview",
-    //   label: "Overview",
-    //   icon: <FileText className="h-4 w-4" />,
-    //   content: <div className="bg-yellow-300 w-full">test</div>,
-    // },
-
     {
       id: "chat",
       label: "Chat",
@@ -75,13 +67,7 @@ export function FlexTabs() {
           stop={stop}
           append={append}
           setMessages={setMessages}
-          // transcribeAudio={transcribeAudio}
           suggestions={[]}
-          // {[
-          //   "What is the weather in San Francisco?",
-          //   "Explain step-by-step how to solve this math problem: If x² + 6x + 9 = 25, what is x?",
-          //   "Design a simple algorithm to find the longest palindrome in a string.",
-          // ]}
         />
       ),
     },

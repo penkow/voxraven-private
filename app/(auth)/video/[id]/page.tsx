@@ -5,9 +5,10 @@ import { useYoutubeVideo } from "./use-youtube-video";
 import TranscriptViewer from "./transcript-viewer";
 import { Badge } from "@/components/ui/badge";
 import { FlexTabs } from "./flex-tabs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { set } from "date-fns";
 import { useParams } from "next/navigation";
+import { io } from "socket.io-client";
 
 export default function ResponsiveLayout() {
   const { id } = useParams();
@@ -73,7 +74,7 @@ export default function ResponsiveLayout() {
       </div>
 
       <div className="flex flex-1">
-        <FlexTabs />
+        <FlexTabs videoId={id as string} />
       </div>
     </div>
   );

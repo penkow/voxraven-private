@@ -10,20 +10,10 @@ interface CreditsCardProps {}
 
 export function CreditsCard({}: CreditsCardProps) {
   const [progressValue, setProgressValue] = useState(0);
-  const [totalCredits, setTotalCredits] = useState(0);
-  const [usedCredits, setUsedCredits] = useState(0);
-  const [bonusCredits, setBonusCredits] = useState(0);
-  const { user } = useAuth();
+
+  const { user, usedCredits, totalCredits, bonusCredits } = useAuth();
 
   useEffect(() => {
-    const totalCredits = user?.totalCredits || 0;
-    const usedCredits = user?.usedCredits || 0;
-    const bonusCredits = user?.bonusCredits || 0;
-
-    setTotalCredits(totalCredits);
-    setUsedCredits(usedCredits);
-    setBonusCredits(bonusCredits);
-
     const percentage =
       100 -
       ((totalCredits - usedCredits + bonusCredits) /
