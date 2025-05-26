@@ -2,7 +2,7 @@ import { set } from "date-fns";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
-interface TranscriptSegment {
+export interface TranscriptSegment {
   id: number;
   text: string;
   startTime: number;
@@ -26,9 +26,9 @@ export function useYoutubeVideo({ videoId }: UseYoutubeVideoProps) {
   const commentsAnalysis = predefinedCommentsAnalysis;
   const painPoints = predefinedPainPoints;
   const targetAudience = predefinedTargetAudience;
-  const [views, setViews] = useState(123124);
-  const [likes, setLikes] = useState(775419);
-  const [commentsCount, setCommentsCount] = useState(42424242);
+  const [views, setViews] = useState(0);
+  const [likes, setLikes] = useState(0);
+  const [commentsCount, setCommentsCount] = useState(0);
   const [description, setDescription] = useState("A Dummy Video Description");
   const [transcript, setTranscript] = useState<TranscriptSegment[]>([]);
 

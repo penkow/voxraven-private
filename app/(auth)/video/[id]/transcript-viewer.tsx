@@ -2,14 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
-
-interface TranscriptSegment {
-  id: number;
-  speaker: string;
-  text: string;
-  startTime: number;
-  endTime: number;
-}
+import { TranscriptSegment } from "./use-youtube-video";
 
 interface TranscriptViewerProps {
   transcript: TranscriptSegment[];
