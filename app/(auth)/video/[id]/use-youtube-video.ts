@@ -33,20 +33,21 @@ export function useYoutubeVideo({ videoId }: UseYoutubeVideoProps) {
   const [transcript, setTranscript] = useState<TranscriptSegment[]>([]);
 
   const [loading, setLoading] = useState(false);
+  const YOUTUBE_VIDEO_ENDPOINT = new URL(
+    `api/youtube/${videoId}`,
+    process.env.NEXT_PUBLIC_API_URL
+  );
 
   useEffect(() => {
     const fetchVideoData = async () => {
       console.log("Fetching video data");
-      const response = await fetch(
-        `http://localhost:3000/api/youtube/${videoId}`,
-        {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(YOUTUBE_VIDEO_ENDPOINT, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       const videoData: VideoData = await response.json();
       setDescription(videoData.description);

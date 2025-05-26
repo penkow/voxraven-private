@@ -1,11 +1,13 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { useEffect, useState, useRef } from "react";
 
 interface VideoModalProps {
   videoId: string;
   currentTime?: number;
   playerTimeCallback: (time: number) => void;
+  className?: string;
 }
 
 // Define YouTube Player type
@@ -28,6 +30,7 @@ export default function VideoPlayer({
   videoId,
   currentTime,
   playerTimeCallback,
+  className = "",
 }: VideoModalProps) {
   const playerRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -115,7 +118,7 @@ export default function VideoPlayer({
   }, [videoId]);
 
   return (
-    <div className="aspect-video w-full">
+    <div className={cn("aspect-video", className)}>
       <div ref={containerRef} className="w-full h-full" />
     </div>
   );
