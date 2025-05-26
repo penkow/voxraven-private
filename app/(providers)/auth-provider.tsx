@@ -63,7 +63,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const socket = io(process.env.NEXT_PUBLIC_API_URL);
 
+    console.log("Connecting to socket.io at", process.env.NEXT_PUBLIC_API_URL);
+
     socket.on("credits", (msg) => {
+      console.log("Received credits update:", msg);
       setUsedCredits(msg.credits);
     });
   }, []);
