@@ -16,6 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useYoutubeVideo } from "./use-youtube-video";
 import { useChat } from "@ai-sdk/react";
+import { useYouTube } from "./youtube-provider";
 
 interface TabItem {
   id: string;
@@ -24,13 +25,21 @@ interface TabItem {
   content: React.ReactNode;
 }
 
-export function FlexTabs({ videoId }: { videoId: string }) {
+export function FlexTabs() {
   const [activeTab, setActiveTab] = useState("chat");
 
-  const { summary, commentsAnalysis, painPoints, targetAudience, transcript } =
-    useYoutubeVideo({
-      videoId: videoId,
-    });
+  const {
+    videoId,
+    description,
+    summary,
+    views,
+    likes,
+    commentsCount,
+    commentsAnalysis,
+    painPoints,
+    targetAudience,
+    transcript,
+  } = useYouTube();
 
   const AI_CHAT_API = new URL(`api/ai/chat`, process.env.NEXT_PUBLIC_API_URL);
 
