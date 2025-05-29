@@ -8,7 +8,7 @@ import { use, useEffect, useState } from "react";
 import { set } from "date-fns";
 import { useParams } from "next/navigation";
 import { io } from "socket.io-client";
-import { useYouTube, YoutubeProvider } from "./youtube-provider";
+import { TranscriptSegment, useYouTube, YoutubeProvider } from "./youtube-provider";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ResponsiveLayout() {
@@ -87,7 +87,7 @@ function YoutubeContent() {
 
         <div className="font-bold text-sm">Transcript:</div>
         <TranscriptViewer
-          transcript={transcript}
+          transcript={transcript as TranscriptSegment[]}
           currentVideoTime={currentVideoTime}
           onSegmentClick={(segment: any) => {
             console.log("Segment clicked:", segment);
