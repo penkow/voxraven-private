@@ -1,6 +1,13 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "sonner";
 
+import { ReactNode } from "react";
+import { io } from "socket.io-client";
+
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
 interface UserPayload {
   id: string;
   email: string;
@@ -33,13 +40,6 @@ const AuthContext = createContext<{
   logout: () => {},
 });
 
-import { ReactNode } from "react";
-import { io } from "socket.io-client";
-
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<UserPayload | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -64,11 +64,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const socket = io(process.env.NEXT_PUBLIC_SOCKET_IO_URL, {
       withCredentials: true,
     });
-
-    console.log(
-      "Connecting to socket.io at",
-      process.env.NEXT_PUBLIC_SOCKET_IO_URL
-    );
 
     socket.on("credits", (msg) => {
       console.log("Received credits update:", msg);

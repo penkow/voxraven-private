@@ -1,5 +1,23 @@
 "use client";
 import { Chat } from "./chat-module/chat";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+const customComponents = {
+  ul: (props: any) => (
+    <ul className={cn("list-disc pl-6 space-y-1")} {...props} />
+  ),
+  ol: (props: any) => (
+    <ol className={cn("list-decimal pl-6 space-y-1")} {...props} />
+  ),
+  table: (props: React.JSX.IntrinsicAttributes) => (
+    <table className="table-auto border border-gray-300" {...props} />
+  ),
+  th: (props: any) => (
+    <th className="border px-4 py-2 bg-gray-100" {...props} />
+  ),
+  td: (props: any) => <td className="border px-4 py-2" {...props} />,
+};
 
 import type React from "react";
 
@@ -14,9 +32,9 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { useYoutubeVideo } from "./use-youtube-video";
 import { useChat } from "@ai-sdk/react";
 import { useYouTube } from "./youtube-provider";
+import { motion } from "framer-motion";
 
 interface TabItem {
   id: string;
@@ -60,6 +78,43 @@ export function FlexTabs() {
     },
   });
 
+  const createTabItem = (label: string, content: string | undefined | null) => {
+    return content ? (
+      <div className="p-6 bg-card rounded-lg border overflow-auto text-sm">
+        <h3 className="text-xl font-semibold mb-4">{label}</h3>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          components={customComponents}
+        >
+          {content}
+        </ReactMarkdown>
+      </div>
+    ) : (
+      <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground p-6 flex-1 border rounded-lg">
+        <span className="text-xl font-extralight">
+          Analyzing <span className="italic font-thin">{label}</span> with
+        </span>
+        <span className="text-2xl font-bold">VoxRaven AI</span>
+        <div
+          className="flex items-center justify-center"
+          role="status"
+          aria-label="Loading"
+        >
+          <motion.div
+            className="rounded-full border-2 border-t-transparent h-12 w-12"
+            animate={{ rotate: 360 }}
+            transition={{
+              duration: 1,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "linear",
+            }}
+          />
+          <span className="sr-only">Loading</span>
+        </div>
+      </div>
+    );
+  };
+
   const tabs: TabItem[] = [
     {
       id: "chat",
@@ -84,54 +139,44 @@ export function FlexTabs() {
       id: "summary",
       label: "Summary",
       icon: <FileText className="h-4 w-4" />,
-      content: (
-        <div className="p-6 bg-card rounded-lg border">
-          <h3 className="text-xl font-semibold mb-4">Summary</h3>
-          <p className="text-muted-foreground">{summary}</p>
-        </div>
-      ),
+      content: createTabItem("Summary", summary),
     },
+
     {
       id: "pain-points",
       label: "Pain Points",
       icon: <AlertTriangle className="h-4 w-4" />,
-      content: (
-        <div className="p-6 bg-card rounded-lg border">
-          <h3 className="text-xl font-semibold mb-4">Pain Points</h3>
-          <p className="text-muted-foreground">{painPoints}</p>
-        </div>
-      ),
+      content: createTabItem("Pain Points", painPoints),
     },
     {
       id: "target-audience",
       label: "Audience",
       icon: <Users className="h-4 w-4" />,
-      content: (
-        <div className="p-6 bg-card rounded-lg border">
-          <h3 className="text-xl font-semibold mb-4">Target Audience</h3>
-          <p className="text-muted-foreground">{targetAudience}</p>
-        </div>
-      ),
+      content: createTabItem("Audience", targetAudience),
     },
     {
       id: "comments-analysis",
       label: "Comments",
       icon: <BarChart3 className="h-4 w-4" />,
-      content: (
-        <div className="p-6 bg-card rounded-lg border">
-          <h3 className="text-xl font-semibold mb-4">Comments Analysis</h3>
-          <p className="text-muted-foreground">{commentsAnalysis}</p>
-        </div>
-      ),
+      content: createTabItem("Comments", commentsAnalysis),
     },
     {
       id: "artifacts",
       label: "Artifacts",
       icon: <Box className="h-4 w-4" />,
       content: (
-        <div className="p-6 bg-card rounded-lg border">
-          <h3 className="text-xl font-semibold mb-4">Artifacts</h3>
-          <p className="text-muted-foreground">{commentsAnalysis}</p>
+        <div className="p-6 bg-card rounded-lg flex-1 border">
+          <div className="flex flex-col items-center justify-center h-full">
+            <span className="text-8xl mb-2">🚧</span>
+            <span className="text-4xl font-semibold">Under Construction</span>
+            <span className="text-md text-muted-foreground mt-1">
+              Track your self-selected insights here and use them as context for
+              the AI.
+            </span>
+            <span className="text-md text-muted-foreground mt-1">
+              Artifacts tab coming soon!
+            </span>
+          </div>
         </div>
       ),
     },
@@ -139,7 +184,6 @@ export function FlexTabs() {
 
   return (
     <div className="w-full flex flex-col">
-      {/* Custom TabsList with Flexbox */}
       <div className="flex w-full rounded-md bg-muted p-1 mb-6">
         {tabs.map((tab) => (
           <button

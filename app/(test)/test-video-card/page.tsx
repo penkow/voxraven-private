@@ -1,5 +1,5 @@
 "use client";
-import VideoPlayer from "@/app/(auth)/analysis/[id]/blocks/VideoPlayer";
+import VideoPlayer from "@/app/(auth)/project/[id]/blocks/VideoPlayer";
 import { Eye, MessageSquare, ThumbsUp } from "lucide-react";
 import { useYoutubeVideo } from "./use-youtube-video";
 import TranscriptViewer from "./transcript-viewer";

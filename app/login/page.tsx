@@ -34,7 +34,7 @@ export default function NewPage() {
   useEffect(() => {
     if (isAuthenticated) {
       fetchProjects().then(() => {
-        router.push("/analysis");
+        router.push("/video");
       });
     }
   }, [isAuthenticated, router]);

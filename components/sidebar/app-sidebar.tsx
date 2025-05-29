@@ -20,8 +20,13 @@ import { CreditsCard } from "./credits-card";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
-  const handleNewAnalysis = async () => {
-    router.push(`/analysis`);
+
+  const handleNewProject = async () => {
+    router.push(`/project`);
+  };
+
+  const handleNewVideo = async () => {
+    router.push(`/video`);
   };
 
   return (
@@ -36,20 +41,31 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">VoxRaven</span>
-                  <span className="truncate text-xs">Alpha v0.3.0</span>
+                  <span className="truncate text-xs text-gray-500">Version v0.4.2-b.1</span>
                 </div>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem className="pt-4">
+{/* 
             <Button
               size="default"
               variant="outline"
               className="w-full font-medium"
-              onClick={handleNewAnalysis}
+              onClick={handleNewProject}
             >
-              New Analysis
+              New Project
+            </Button> */}
+
+            <Button
+              size="default"
+              variant="outline"
+              className="w-full font-medium"
+              onClick={handleNewVideo}
+            >
+              New Video
             </Button>
+
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>

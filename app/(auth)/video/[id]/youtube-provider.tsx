@@ -3,6 +3,8 @@ import { toast } from "sonner";
 import { ReactNode } from "react";
 import { Project } from "@prisma/client";
 
+import { io } from "socket.io-client";
+
 export interface TranscriptSegment {
   id: number;
   text: string;
@@ -10,26 +12,34 @@ export interface TranscriptSegment {
   endTime: number;
 }
 
-interface VideoData {
-  description: string;
-  commentsCount: number;
-  viewsCount: number;
-  likesCount: number;
-  transcript: TranscriptSegment[];
+interface VideoDataResponse {
+  videoInfo?: VideoInfo;
+  transcript?: TranscriptSegment[];
+  summary?: string;
+  commentsAnalysis?: string;
+  painPoints?: string;
+  targetAudience?: string;
+}
+
+interface VideoInfo {
+  description: string | null;
+  comment_count: number;
+  view_count: number;
+  like_count: number;
 }
 
 // Define the context value type
 const YoutubeProviderContext = createContext<{
   videoId: string;
-  description: string | null;
-  summary: string | null;
-  views: number | null;
-  likes: number | null;
-  commentsCount: number | null;
-  commentsAnalysis: string | null;
-  painPoints: string | null;
-  targetAudience: string | null;
-  transcript: TranscriptSegment[];
+  description: string | null | undefined;
+  summary: string | null | undefined;
+  views: number | null | undefined;
+  likes: number | null | undefined;
+  commentsCount: number | null | undefined;
+  commentsAnalysis: string | null | undefined;
+  painPoints: string | null | undefined;
+  targetAudience: string | null | undefined;
+  transcript: TranscriptSegment[] | null | undefined;
 }>({
   videoId: "",
   description: null,
@@ -40,7 +50,7 @@ const YoutubeProviderContext = createContext<{
   commentsAnalysis: null,
   painPoints: null,
   targetAudience: null,
-  transcript: [],
+  transcript: null,
 });
 
 interface YoutubeProviderProps {
@@ -49,15 +59,25 @@ interface YoutubeProviderProps {
 }
 
 export function YoutubeProvider({ children, videoId }: YoutubeProviderProps) {
-  const summary = predefinedSummary;
-  const commentsAnalysis = predefinedCommentsAnalysis;
-  const painPoints = predefinedPainPoints;
-  const targetAudience = predefinedTargetAudience;
-  const [views, setViews] = useState(0);
-  const [likes, setLikes] = useState(0);
-  const [commentsCount, setCommentsCount] = useState(0);
-  const [description, setDescription] = useState("A Dummy Video Description");
-  const [transcript, setTranscript] = useState<TranscriptSegment[]>([]);
+  const [summary, setSummary] = useState<string | null | undefined>(null);
+  const [commentsAnalysis, setCommentsAnalysis] = useState<
+    string | null | undefined
+  >(null);
+  const [painPoints, setPainPoints] = useState<string | null | undefined>(null);
+  const [targetAudience, setTargetAudience] = useState<
+    string | null | undefined
+  >(null);
+  const [views, setViews] = useState<number | null | undefined>(0);
+  const [likes, setLikes] = useState<number | null | undefined>(0);
+  const [commentsCount, setCommentsCount] = useState<number | null | undefined>(
+    0
+  );
+  const [description, setDescription] = useState<string | null | undefined>(
+    null
+  );
+  const [transcript, setTranscript] = useState<
+    TranscriptSegment[] | null | undefined
+  >([]);
 
   const [loading, setLoading] = useState(false);
   const YOUTUBE_VIDEO_ENDPOINT = new URL(
@@ -76,18 +96,69 @@ export function YoutubeProvider({ children, videoId }: YoutubeProviderProps) {
         },
       });
 
-      const videoData: VideoData = await response.json();
+      const data: VideoDataResponse = await response.json();
 
-      console.log("Video Data:", videoData);
-
-      setDescription(videoData.description);
-      setViews(videoData.viewsCount);
-      setLikes(videoData.likesCount);
-      setCommentsCount(videoData.commentsCount);
-      setTranscript(videoData.transcript);
+      setDescription(data?.videoInfo?.description);
+      setViews(data?.videoInfo?.view_count);
+      setLikes(data?.videoInfo?.like_count);
+      setCommentsCount(data?.videoInfo?.comment_count);
+      setTranscript(data?.transcript);
+      setSummary(data?.summary);
+      setPainPoints(data?.painPoints)
+      setTargetAudience(data?.targetAudience)
+      setCommentsAnalysis(data?.commentsAnalysis)
     };
 
     fetchVideoData();
+
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET_IO_URL, {
+      withCredentials: true,
+    });
+
+    socket.on(`transcript/${videoId}`, (msg) => {
+      //console.log("Received transcript:", msg);
+      const transcript = msg.transcript;
+      if (Array.isArray(transcript)) {
+        setTranscript(transcript);
+      }
+    });
+
+    socket.on(`videoInfo/${videoId}`, (msg) => {
+      console.log("Received videoInfo:", msg);
+      const videoInfo = msg.videoInfo;
+      setDescription(videoInfo.description);
+      setViews(videoInfo.views_count);
+      setLikes(videoInfo.likes_count);
+      setCommentsCount(videoInfo.comments_count);
+    });
+
+    socket.on(`summary/${videoId}`, (msg) => {
+      console.log("Received summary:", msg);
+      const summary = msg.summary;
+      setSummary(summary);
+    });
+
+    socket.on(`painPoints/${videoId}`, (msg) => {
+      console.log("Received pain points:", msg);
+      const painPoints = msg.painPoints;
+      setPainPoints(painPoints);
+    });
+
+    socket.on(`targetAudience/${videoId}`, (msg) => {
+      console.log("Received target audience:", msg);
+      const targetAudience = msg.targetAudience;
+      setTargetAudience(targetAudience);
+    });
+
+    socket.on(`commentsAnalysis/${videoId}`, (msg) => {
+      console.log("Received comments analysis:", msg);
+      const commentsAnalysis = msg.commentsAnalysis;
+      setCommentsAnalysis(commentsAnalysis);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, [videoId]);
 
   const contextValue = useMemo(
@@ -128,120 +199,3 @@ export function YoutubeProvider({ children, videoId }: YoutubeProviderProps) {
 export function useYouTube() {
   return useContext(YoutubeProviderContext);
 }
-
-const predefinedSummary = `Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book. It has
-              survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was
-              popularised in the 1960s with the release of Letraset sheets
-              containing Lorem Ipsum passages, and more recently with desktop
-              publishing software like Aldus PageMaker including versions of
-              Lorem Ipsum.`;
-
-const predefinedCommentsAnalysis = `Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book. It has
-              survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was
-              popularised in the 1960s with the release of Letraset sheets
-              containing Lorem Ipsum passages, and more recently with desktop
-              publishing software like Aldus PageMaker including versions of
-              Lorem Ipsum.`;
-
-const predefinedPainPoints = `Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book. It has
-              survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was
-              popularised in the 1960s with the release of Letraset sheets
-              containing Lorem Ipsum passages, and more recently with desktop
-              publishing software like Aldus PageMaker including versions of
-              Lorem Ipsum.`;
-
-const predefinedTargetAudience = `Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book. It has
-              survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was
-              popularised in the 1960s with the release of Letraset sheets
-              containing Lorem Ipsum passages, and more recently with desktop
-              publishing software like Aldus PageMaker including versions of
-              Lorem Ipsum.`;
-
-const predefinedTranscript = [
-  {
-    id: 1,
-    speaker: "John",
-    text: "Good morning everyone. Thank you for joining today's meeting about the new product launch.",
-    startTime: 0,
-    endTime: 5.2,
-  },
-  {
-    id: 2,
-    speaker: "Sarah",
-    text: "Thanks John. I'd like to start by discussing our marketing strategy for the first quarter.",
-    startTime: 5.3,
-    endTime: 9.8,
-  },
-  {
-    id: 3,
-    speaker: "John",
-    text: "That sounds great. We've been working on some new social media campaigns that I think will be very effective.",
-    startTime: 10.0,
-    endTime: 15.5,
-  },
-  {
-    id: 4,
-    speaker: "Michael",
-    text: "I have some data from our previous campaigns that might be helpful. Can I share my screen?",
-    startTime: 15.6,
-    endTime: 19.2,
-  },
-  {
-    id: 5,
-    speaker: "Sarah",
-    text: "Of course, go ahead Michael. I'm particularly interested in seeing how our last video campaign performed.",
-    startTime: 19.3,
-    endTime: 24.1,
-  },
-  {
-    id: 6,
-    speaker: "Michael",
-    text: "As you can see from these numbers, our engagement rate increased by 45% when we focused on customer testimonials.",
-    startTime: 24.2,
-    endTime: 30.5,
-  },
-  {
-    id: 7,
-    speaker: "John",
-    text: "That's impressive. I think we should definitely incorporate more testimonials in our upcoming launch.",
-    startTime: 30.6,
-    endTime: 35.0,
-  },
-  {
-    id: 8,
-    speaker: "Sarah",
-    text: "I agree. Let's plan to collect some testimonials from our beta testers before the official launch date.",
-    startTime: 35.1,
-    endTime: 40.2,
-  },
-  {
-    id: 9,
-    speaker: "Michael",
-    text: "I can coordinate with the product team to identify our most enthusiastic beta users for testimonials.",
-    startTime: 40.3,
-    endTime: 45.8,
-  },
-  {
-    id: 10,
-    speaker: "John",
-    text: "Perfect. Let's reconvene next week to review the testimonials and finalize our marketing materials.",
-    startTime: 45.9,
-    endTime: 50.0,
-  },
-];

@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
-import { TranscriptSegment } from "./use-youtube-video";
+import { TranscriptSegment } from "./youtube-provider";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface TranscriptViewerProps {
   transcript: TranscriptSegment[];
@@ -10,11 +11,11 @@ interface TranscriptViewerProps {
   onSegmentClick?: (segment: TranscriptSegment) => void;
 }
 
-export default function TranscriptViewer({
+const TranscriptContainer = ({
   transcript,
   currentVideoTime,
   onSegmentClick = () => {}, // Default no-op function
-}: TranscriptViewerProps) {
+}: TranscriptViewerProps) => {
   const segmentRefs = useRef<Map<number, HTMLDivElement>>(new Map());
   const [currentSegmentId, setCurrentSegmentId] = useState(0);
 
@@ -64,6 +65,29 @@ export default function TranscriptViewer({
             </span>
           </div>
           <p className="text-sm">{segment.text}</p>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default function TranscriptViewer({
+  transcript,
+  currentVideoTime,
+  onSegmentClick = () => {}, // Default no-op function
+}: TranscriptViewerProps) {
+  return transcript ? (
+    <TranscriptContainer
+      transcript={transcript}
+      currentVideoTime={currentVideoTime}
+      onSegmentClick={onSegmentClick}
+    />
+  ) : (
+    <div className="flex flex-col gap-2 flex-1 border rounded-md overflow-auto">
+      {[...Array(8)].map((_, i) => (
+        <div key={i} className="flex flex-col gap-1 p-3 rounded-md bg-muted/50">
+          <Skeleton className="h-3 w-24 mb-2" />
+          <Skeleton className="h-4 w-full" />
         </div>
       ))}
     </div>

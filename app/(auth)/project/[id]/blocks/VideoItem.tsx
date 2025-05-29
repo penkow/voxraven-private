@@ -101,7 +101,8 @@ export default function VideoItem({ video, onStartChat }: VideoItemProps) {
 
       <div className="flex flex-col flex-1 gap-4">
         <a
-          href={video.url}
+          //href={video.url}
+          href={"/video/" + video.id}
           target="_blank"
           rel="noopener noreferrer"
           className="font-semibold text-sm hover:underline"

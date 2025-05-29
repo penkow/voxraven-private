@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Youtube } from "lucide-react";
+import { FolderClosed, Youtube } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Project } from "@prisma/client";
 import { useProjects } from "@/app/(providers)/projects-provider";
@@ -31,7 +31,7 @@ const AnalysisPage = () => {
         throw new Error("Failed to create project");
       }
 
-      router.push(`/analysis/${project.id}`);
+      router.push(`/project/${project.id}`);
     } catch (error) {
       console.error("Error submitting video:", error);
     } finally {
@@ -40,23 +40,24 @@ const AnalysisPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto my-auto px-4 py-8">
       <div className="max-w-2xl mx-auto space-y-8">
-        <div className="text-center space-y-4 pt-44">
-          <h1 className="text-4xl font-bold">Video Analysis</h1>
-          <p className="text-muted-foreground">
-            Start by adding your first YouTube video URL for the analysis.
+        <div className="text-center gap-1 flex flex-col">
+          <h1 className="text-4xl font-bold">New Project</h1>
+          <p className="text-muted-foreground italic text-sm pt-1">
+            Every great project begins with a single step. The important part is
+            to begin — momentum will follow...
           </p>
         </div>
 
         <Card className="w-full">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Youtube className="h-5 w-5 text-red-500" />
-              YouTube Video Analysis
+              <FolderClosed className="h-5 w-5" />
+              Project Name
             </CardTitle>
             <CardDescription>
-              Start by naming your project
+              Create a project that will contain all of your videos.
             </CardDescription>
           </CardHeader>
           <CardContent>

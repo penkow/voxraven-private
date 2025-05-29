@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, MessageCircle, Plus, Sparkles, X } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import VideoItem from "./blocks/VideoItem";
-import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -13,10 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import ChatContainer from "./blocks/ChatContainer";
 import { useParams, useRouter } from "next/navigation";
-import { AnimatePresence } from "framer-motion";
-import { motion } from "framer-motion";
 
 import { Project } from "@prisma/client";
 import { Prisma } from "@prisma/client";
@@ -101,9 +97,6 @@ export default function VideoSelectionInterface() {
     setVideoUrl("");
   };
 
-  const viewSynthesis = async () => {
-    router.push(`/insights/${id}`);
-  };
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -141,45 +134,11 @@ export default function VideoSelectionInterface() {
   return (
     <>
       <div className="flex flex-col w-full h-[calc(100vh-18px)]">
-        {/* Green div - fixed height header */}
-        {/* <div className="w-full h-[50px] min-h-[50px] border-black border rounded-md flex items-center justify-center"> */}
         <div className="flex justify-between items-center p-4 border-b border-slate-100">
           <h2 className="text-2xl font-medium">
             {project?.title || "Loading..."}
           </h2>
           <div className="flex gap-2">
-            <Button
-              size="sm"
-              className="bg-purple-700 hover:bg-purple-600 text-white"
-              onClick={handleGenerateSynthesis}
-              disabled={isGeneratingSynthesis}
-            >
-              {hasSynthesis ? (
-                <>
-                  {isGeneratingSynthesis ? (
-                    <div className="flex items-center gap-2">
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                      <span>Generating idea...</span>
-                    </div>
-                  ) : (
-                    <>
-                      <Sparkles className="h-4 w-4" />
-                      Video Idea Synthesis
-                    </>
-                  )}{" "}
-                </>
-              ) : (
-                <>
-                  <Button
-                    size="sm"
-                    className="bg-purple-700 hover:bg-purple-600 text-white"
-                    onClick={viewSynthesis}
-                  >
-                    View Synthesis
-                  </Button>
-                </>
-              )}
-            </Button>
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
               <DialogTrigger asChild>
                 <Button size="sm">
@@ -268,40 +227,6 @@ export default function VideoSelectionInterface() {
           </span>
         </div>
       </div>
-
-      {/* <AnimatePresence mode="popLayout">
-        {isChatOpen && (
-          <motion.div
-            className="w-96 border-l border-gray-200"
-            initial={{ x: "100%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: "100%", opacity: 0 }}
-            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-          >
-            <div className="h-full flex flex-col">
-              <div className="flex items-center justify-between p-2 border-b">
-                <div className="flex items-center font-bold space-x-2">
-                  <MessageCircle className="h-5 w-5 text-primary" />
-                  <div>Chatting with:</div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsChatOpen(false)}
-                  className="h-8 w-8"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="p-2 text-center text-lg font-medium border-b">
-                {currentChatVideo?.tags}
-              </div>
-
-              <ChatContainer currentChatVideo={currentChatVideo} />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence> */}
     </>
   );
 }

@@ -2,9 +2,7 @@
 
 import { Trash2 } from "lucide-react";
 
-import {
-  Collapsible,
-} from "@/components/ui/collapsible";
+import { Collapsible } from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -16,7 +14,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProjects } from "@/app/(providers)/projects-provider";
 import { Loader2 } from "lucide-react";
-
 
 import { Button } from "@/components/ui/button";
 import {
@@ -71,7 +68,7 @@ function SideMenuDialog({
               setTimeout(async () => {
                 await deleteProject(projectId);
                 setAlertIsOpen(false);
-                router.push("/analysis");
+                router.push("/project");
                 setIsDeleting(false);
               }, 2000);
             }}
@@ -93,7 +90,7 @@ export function NavMain() {
   if (projects === null || projects === undefined) {
     return (
       <SidebarGroup>
-        <SidebarGroupLabel>Analyses</SidebarGroupLabel>
+        <SidebarGroupLabel>Projects</SidebarGroupLabel>
         <SidebarMenu>
           {[...Array(3)].map((_, index) => (
             <SidebarMenuItem key={index}>
@@ -108,13 +105,13 @@ export function NavMain() {
   return (
     <>
       <SidebarGroup>
-        <SidebarGroupLabel>Analyses</SidebarGroupLabel>
+        <SidebarGroupLabel>Projects</SidebarGroupLabel>
         <SidebarMenu>
           {projects?.map((item) => (
             <Collapsible key={item.id} asChild defaultOpen={false}>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip={item.title}>
-                  <a href={`/analysis/${item.id}`}>
+                  <a href={`/project/${item.id}`}>
                     <span>{item.title}</span>
                   </a>
                 </SidebarMenuButton>
@@ -131,6 +128,14 @@ export function NavMain() {
               </SidebarMenuItem>
             </Collapsible>
           ))}
+
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild disabled>
+                <span className="text-muted-foreground ">
+                🚧 Under construction…
+                </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
         </SidebarMenu>
       </SidebarGroup>
       <SideMenuDialog

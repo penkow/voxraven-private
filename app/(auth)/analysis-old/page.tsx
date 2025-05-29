@@ -31,7 +31,7 @@ const AnalysisPage = () => {
         throw new Error("Failed to create project");
       }
 
-      router.push(`/analysis/${project.id}`);
+      router.push(`/project/${project.id}`);
     } catch (error) {
       console.error("Error submitting video:", error);
     } finally {
