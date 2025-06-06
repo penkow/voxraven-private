@@ -129,13 +129,13 @@ export function NavMain() {
             </Collapsible>
           ))}
 
-          <SidebarMenuItem>
+          {/* <SidebarMenuItem>
             <SidebarMenuButton asChild disabled>
                 <span className="text-muted-foreground ">
                 🚧 Under construction…
                 </span>
             </SidebarMenuButton>
-          </SidebarMenuItem>
+          </SidebarMenuItem> */}
         </SidebarMenu>
       </SidebarGroup>
       <SideMenuDialog

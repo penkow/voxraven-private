@@ -1,13 +1,9 @@
 "use client";
 import VideoPlayer from "@/app/(auth)/project/[id]/blocks/VideoPlayer";
-import { Eye, MessageSquare, ThumbsUp } from "lucide-react";
 import TranscriptViewer from "./transcript-viewer";
-import { Badge } from "@/components/ui/badge";
 import { FlexTabs } from "./flex-tabs";
-import { use, useEffect, useState } from "react";
-import { set } from "date-fns";
+import { useState } from "react";
 import { useParams } from "next/navigation";
-import { io } from "socket.io-client";
 import { TranscriptSegment, useYouTube, YoutubeProvider } from "./youtube-provider";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -23,7 +19,7 @@ export default function ResponsiveLayout() {
 
 function YoutubeContent() {
   const {
-    videoId,
+    youtubeId,
     description,
     summary,
     views,
@@ -44,7 +40,7 @@ function YoutubeContent() {
         <div className="flex flex-col gap-4 p-4 border border-slate-200 rounded-lg">
           <div className="flex">
             <VideoPlayer
-              videoId={videoId}
+              videoId={youtubeId}
               currentTime={currentTime}
               className="w-full"
               playerTimeCallback={(time) => {
@@ -52,21 +48,6 @@ function YoutubeContent() {
               }}
             />
           </div>
-
-          {/* <div className="flex gap-4 text-xs">
-            <div className="flex items-center gap-2">
-              <ThumbsUp className="h-4 w-4" />
-              <span>{likes}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Eye className="h-4 w-4" />
-              <span>{views}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4" />
-              <span>{commentsCount}</span>
-            </div>
-          </div> */}
 
           <div className="text-sm flex flex-col gap-2">
             <div className="font-bold">Description</div>
@@ -91,7 +72,6 @@ function YoutubeContent() {
           currentVideoTime={currentVideoTime}
           onSegmentClick={(segment: any) => {
             console.log("Segment clicked:", segment);
-            // You can add more functionality here, like seeking the video
             setCurrentTime(segment.startTime);
           }}
         />

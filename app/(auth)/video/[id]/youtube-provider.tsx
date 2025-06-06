@@ -30,7 +30,7 @@ interface VideoInfo {
 
 // Define the context value type
 const YoutubeProviderContext = createContext<{
-  videoId: string;
+  youtubeId: string;
   description: string | null | undefined;
   summary: string | null | undefined;
   views: number | null | undefined;
@@ -41,7 +41,7 @@ const YoutubeProviderContext = createContext<{
   targetAudience: string | null | undefined;
   transcript: TranscriptSegment[] | null | undefined;
 }>({
-  videoId: "",
+  youtubeId: "",
   description: null,
   summary: null,
   views: null,
@@ -60,35 +60,26 @@ interface YoutubeProviderProps {
 
 export function YoutubeProvider({ children, videoId }: YoutubeProviderProps) {
   const [summary, setSummary] = useState<string | null | undefined>(null);
-  const [commentsAnalysis, setCommentsAnalysis] = useState<
-    string | null | undefined
-  >(null);
+  const [commentsAnalysis, setCommentsAnalysis] = useState<string | null | undefined>(null);
   const [painPoints, setPainPoints] = useState<string | null | undefined>(null);
-  const [targetAudience, setTargetAudience] = useState<
-    string | null | undefined
-  >(null);
+  const [targetAudience, setTargetAudience] = useState<string | null | undefined>(null);
   const [views, setViews] = useState<number | null | undefined>(0);
   const [likes, setLikes] = useState<number | null | undefined>(0);
-  const [commentsCount, setCommentsCount] = useState<number | null | undefined>(
-    0
-  );
-  const [description, setDescription] = useState<string | null | undefined>(
-    null
-  );
-  const [transcript, setTranscript] = useState<
-    TranscriptSegment[] | null | undefined
-  >([]);
+  const [commentsCount, setCommentsCount] = useState<number | null | undefined>(0);
+  const [description, setDescription] = useState<string | null | undefined>(null);
+  const [transcript, setTranscript] = useState<TranscriptSegment[] | null | undefined>([]);
+
+  const [youtubeId, setYoutubeId] = useState("");
 
   const [loading, setLoading] = useState(false);
-  const YOUTUBE_VIDEO_ENDPOINT = new URL(
-    `api/youtube/${videoId}`,
-    process.env.NEXT_PUBLIC_API_URL
-  );
+
+  const YOUTUBE_VIDEO_ENDPOINT = new URL(`api/youtube/${videoId}`, process.env.NEXT_PUBLIC_API_URL);
+  const VIDEO_ENDPOINT = new URL(`api/videos/${videoId}`, process.env.NEXT_PUBLIC_API_URL);
 
   useEffect(() => {
     const fetchVideoData = async () => {
       console.log("Fetching video data");
-      const response = await fetch(YOUTUBE_VIDEO_ENDPOINT, {
+      const response = await fetch(VIDEO_ENDPOINT, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -96,17 +87,20 @@ export function YoutubeProvider({ children, videoId }: YoutubeProviderProps) {
         },
       });
 
-      const data: VideoDataResponse = await response.json();
+      const data = await response.json();
 
-      setDescription(data?.videoInfo?.description);
-      setViews(data?.videoInfo?.view_count);
-      setLikes(data?.videoInfo?.like_count);
-      setCommentsCount(data?.videoInfo?.comment_count);
+      console.log("Video data fetched:", data);
+
+      setYoutubeId(data?.youtubeId);
+      setDescription(data?.description);
+      setViews(data?.viewCount);
+      setLikes(data?.likeCount);
+      setCommentsCount(data?.commentCount);
       setTranscript(data?.transcript);
-      setSummary(data?.summary);
-      setPainPoints(data?.painPoints)
-      setTargetAudience(data?.targetAudience)
-      setCommentsAnalysis(data?.commentsAnalysis)
+      setSummary(data?.videoInsights[0]?.summary);
+      setPainPoints(data?.videoInsights[0]?.painPoints);
+      setTargetAudience(data?.videoInsights[0]?.targetAudience);
+      setCommentsAnalysis(data?.videoInsights[0]?.commentsAnalysis);
     };
 
     fetchVideoData();
@@ -163,7 +157,7 @@ export function YoutubeProvider({ children, videoId }: YoutubeProviderProps) {
 
   const contextValue = useMemo(
     () => ({
-      videoId,
+      youtubeId,
       description,
       summary,
       views,
@@ -175,7 +169,7 @@ export function YoutubeProvider({ children, videoId }: YoutubeProviderProps) {
       transcript,
     }),
     [
-      videoId,
+      youtubeId,
       description,
       summary,
       views,
@@ -188,11 +182,7 @@ export function YoutubeProvider({ children, videoId }: YoutubeProviderProps) {
     ]
   );
 
-  return (
-    <YoutubeProviderContext.Provider value={contextValue}>
-      {children}
-    </YoutubeProviderContext.Provider>
-  );
+  return <YoutubeProviderContext.Provider value={contextValue}>{children}</YoutubeProviderContext.Provider>;
 }
 
 // Helper hook to access YoutubeProviderContext

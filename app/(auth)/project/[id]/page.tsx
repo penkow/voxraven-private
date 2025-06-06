@@ -18,62 +18,39 @@ import { Project } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { LoadingAnimation } from "./blocks/LoadingAnimation";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
 export type VideoFullType = Prisma.VideoGetPayload<{
   select: { [K in keyof Required<Prisma.VideoSelect>]: true };
 }>;
+
+export type ProjectFullType = Prisma.ProjectGetPayload<{
+  select: { [K in keyof Required<Prisma.ProjectSelect>]: true };
+}>;
+
 export default function VideoSelectionInterface() {
   const { id } = useParams();
 
-  const PROJECTS_ENDPOINT = new URL(
+  const PROJECT_ENDPOINT = new URL(
     `api/projects/${id}`,
     process.env.NEXT_PUBLIC_API_URL
   );
 
-  const SYNTHESIS_ENDPOINT = new URL(
-    `api/synthesis/${id}`,
-    process.env.NEXT_PUBLIC_API_URL
-  );
-
-  // const VIDEOS_ENDPOINT = new URL(
-  //   `api/projects/${id}/videos`,
-  //   process.env.NEXT_PUBLIC_API_URL
-  // );
-
   const VIDEOS_ENDPOINT = new URL(
-    `api/video/${id}`,
+    `api/videos`,
     process.env.NEXT_PUBLIC_API_URL
   );
-
-  const [isGeneratingSynthesis, setIsGeneratingSynthesis] =
-    useState<boolean>(false);
 
   // User Input
   const [videoUrl, setVideoUrl] = useState("");
 
   // Retrieved Data
-  const [projectVideos, setProjectVideos] = useState<VideoFullType[]>([]);
-  const [project, setProject] = useState<Project | null>(null);
-  const [currentChatVideo, setCurrentChatVideo] =
-    useState<VideoFullType | null>(null);
+  const [project, setProject] = useState<ProjectFullType | null>(null);
 
   // State Management
   const [isAddingManual, setIsAddingManual] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [hasSynthesis, setHasSynthesis] = useState(false);
 
   const router = useRouter();
-
-  const handleGenerateSynthesis = async () => {
-    setIsGeneratingSynthesis(true);
-    const response = await fetch(SYNTHESIS_ENDPOINT, {
-      method: "POST",
-      credentials: "include",
-    });
-
-    router.push(`/insights/${id}`);
-    setIsGeneratingSynthesis(false);
-  };
 
   const handleAddVideo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -89,51 +66,29 @@ export default function VideoSelectionInterface() {
       body: JSON.stringify({ videoUrl: videoUrl, projectId: id }),
     });
 
-    const videos: VideoFullType[] = await response.json();
+    const video: VideoFullType = await response.json();
 
-    setProjectVideos(videos);
+    console.log(video);
+
     setIsAddingManual(false);
     setIsModalOpen(false);
     setVideoUrl("");
   };
 
-
   useEffect(() => {
     const fetchProject = async () => {
-      const projectResponse = await fetch(PROJECTS_ENDPOINT, {
+      const projectResponse = await fetch(PROJECT_ENDPOINT, {
         credentials: "include",
       });
-      const project: Project = await projectResponse.json();
+      const project: ProjectFullType = await projectResponse.json();
       setProject(project);
-
-      const videosResponse = await fetch(VIDEOS_ENDPOINT, {
-        credentials: "include",
-      });
-      const videos: VideoFullType[] = await videosResponse.json();
-      setProjectVideos(videos);
-
-      const synthesisResponse = await fetch(SYNTHESIS_ENDPOINT, {
-        credentials: "include",
-      });
-      const synthesis = await synthesisResponse.json();
-
-      if (synthesis) {
-        setHasSynthesis(true);
-      } else {
-        setHasSynthesis(false);
-      }
     };
     fetchProject();
   }, []);
 
-  const handleStartChat = (video: VideoFullType) => {
-    setCurrentChatVideo(video);
-    setIsChatOpen(true);
-  };
-
   return (
     <>
-      <div className="flex flex-col w-full h-[calc(100vh-18px)]">
+      <div className="flex flex-col w-full h-[calc(100vh-1rem)]">
         <div className="flex justify-between items-center p-4 border-b border-slate-100">
           <h2 className="text-2xl font-medium">
             {project?.title || "Loading..."}
@@ -183,19 +138,17 @@ export default function VideoSelectionInterface() {
             </Dialog>
           </div>
         </div>
-        {/* </div> */}
 
-        {/* Red div - scrollable content area */}
         <div className="flex-1 w-full overflow-hidden">
           <ScrollArea className="h-full w-full">
             <div className="p-4">
               <div className="space-y-4">
-                {projectVideos.length > 0 ? (
-                  projectVideos.map((video) => (
+                {project?.videos && project?.videos.length > 0 ? (
+                  project?.videos.map((video) => (
                     <VideoItem
                       key={video.id}
                       video={video}
-                      onStartChat={handleStartChat}
+                      onStartChat={() => {}}
                     />
                   ))
                 ) : (
@@ -221,11 +174,11 @@ export default function VideoSelectionInterface() {
         </div>
 
         {/* Blue div - fixed height footer */}
-        <div className="w-full h-[30px] min-h-[30px] bg-blue-100 border border-blue-300 flex items-center justify-center">
+        {/* <div className="w-full h-[30px] min-h-[30px] bg-blue-100 border border-blue-300 flex items-center justify-center">
           <span className="text-blue-800 font-medium text-xs">
             Blue Footer (Fixed Height)
           </span>
-        </div>
+        </div> */}
       </div>
     </>
   );

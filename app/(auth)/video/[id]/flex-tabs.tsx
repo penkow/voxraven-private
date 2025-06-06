@@ -4,36 +4,21 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 const customComponents = {
-  ul: (props: any) => (
-    <ul className={cn("list-disc pl-6 space-y-1")} {...props} />
-  ),
-  ol: (props: any) => (
-    <ol className={cn("list-decimal pl-6 space-y-1")} {...props} />
-  ),
-  table: (props: React.JSX.IntrinsicAttributes) => (
-    <table className="table-auto border border-gray-300" {...props} />
-  ),
-  th: (props: any) => (
-    <th className="border px-4 py-2 bg-gray-100" {...props} />
-  ),
+  ul: (props: any) => <ul className={cn("list-disc pl-6 space-y-1")} {...props} />,
+  ol: (props: any) => <ol className={cn("list-decimal pl-6 space-y-1")} {...props} />,
+  table: (props: React.JSX.IntrinsicAttributes) => <table className="table-auto border border-gray-300" {...props} />,
+  th: (props: any) => <th className="border px-4 py-2 bg-gray-100" {...props} />,
   td: (props: any) => <td className="border px-4 py-2" {...props} />,
 };
 
 import type React from "react";
 
 import { useState } from "react";
-import {
-  AlertTriangle,
-  BarChart3,
-  Box,
-  FileText,
-  MessageCircle,
-  Users,
-} from "lucide-react";
+import { AlertTriangle, BarChart3, Box, FileText, MessageCircle, Users } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useChat } from "@ai-sdk/react";
-import { useYouTube } from "./youtube-provider";
+import { TranscriptSegment, useYouTube } from "./youtube-provider";
 import { motion } from "framer-motion";
 
 interface TabItem {
@@ -47,7 +32,7 @@ export function FlexTabs() {
   const [activeTab, setActiveTab] = useState("chat");
 
   const {
-    videoId,
+    youtubeId,
     description,
     summary,
     views,
@@ -61,31 +46,53 @@ export function FlexTabs() {
 
   const AI_CHAT_API = new URL(`api/ai/chat`, process.env.NEXT_PUBLIC_API_URL);
 
-  const {
-    messages,
-    input,
-    handleInputChange,
-    handleSubmit,
-    append,
-    stop,
-    status,
-    setMessages,
-  } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, append, stop, status, setMessages } = useChat({
     api: AI_CHAT_API.toString(),
     credentials: "include",
     body: {
-      videoId: videoId,
+      videoId: youtubeId,
     },
   });
+
+  const createChatTabItem = (transcript: TranscriptSegment[] | undefined | null) => {
+    return transcript ? (
+      <Chat
+        messages={messages as any}
+        handleSubmit={handleSubmit}
+        className="border border-slate-200 px-4 pb-4 rounded-lg overflow-auto"
+        input={input}
+        handleInputChange={handleInputChange}
+        isGenerating={status != "ready"}
+        stop={stop}
+        append={append}
+        setMessages={setMessages}
+        suggestions={[]}
+      />
+    ) : (
+      <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground p-6 flex-1 border rounded-lg">
+        <span className="text-xl font-extralight">Preparing AI chat</span>
+        <span className="text-2xl font-bold">VoxRaven AI</span>
+        <div className="flex items-center justify-center" role="status" aria-label="Loading">
+          <motion.div
+            className="rounded-full border-2 border-t-transparent h-12 w-12"
+            animate={{ rotate: 360 }}
+            transition={{
+              duration: 1,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "linear",
+            }}
+          />
+          <span className="sr-only">Loading</span>
+        </div>
+      </div>
+    );
+  };
 
   const createTabItem = (label: string, content: string | undefined | null) => {
     return content ? (
       <div className="p-6 bg-card rounded-lg border overflow-auto text-sm">
         <h3 className="text-xl font-semibold mb-4">{label}</h3>
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          components={customComponents}
-        >
+        <ReactMarkdown remarkPlugins={[remarkGfm]} components={customComponents}>
           {content}
         </ReactMarkdown>
       </div>
@@ -95,11 +102,7 @@ export function FlexTabs() {
           Analyzing <span className="italic font-thin">{label}</span> with
         </span>
         <span className="text-2xl font-bold">VoxRaven AI</span>
-        <div
-          className="flex items-center justify-center"
-          role="status"
-          aria-label="Loading"
-        >
+        <div className="flex items-center justify-center" role="status" aria-label="Loading">
           <motion.div
             className="rounded-full border-2 border-t-transparent h-12 w-12"
             animate={{ rotate: 360 }}
@@ -120,20 +123,7 @@ export function FlexTabs() {
       id: "chat",
       label: "Chat",
       icon: <MessageCircle className="h-4 w-4" />,
-      content: (
-        <Chat
-          messages={messages as any}
-          handleSubmit={handleSubmit}
-          className="border border-slate-200 px-4 pb-4 rounded-lg overflow-auto"
-          input={input}
-          handleInputChange={handleInputChange}
-          isGenerating={status != "ready"}
-          stop={stop}
-          append={append}
-          setMessages={setMessages}
-          suggestions={[]}
-        />
-      ),
+      content: createChatTabItem(transcript as TranscriptSegment[]),
     },
     {
       id: "summary",
@@ -170,12 +160,9 @@ export function FlexTabs() {
             <span className="text-8xl mb-2">🚧</span>
             <span className="text-4xl font-semibold">Under Construction</span>
             <span className="text-md text-muted-foreground mt-1">
-              Track your self-selected insights here and use them as context for
-              the AI.
+              Track your self-selected insights here and use them as context for the AI.
             </span>
-            <span className="text-md text-muted-foreground mt-1">
-              Artifacts tab coming soon!
-            </span>
+            <span className="text-md text-muted-foreground mt-1">Artifacts tab coming soon!</span>
           </div>
         </div>
       ),
@@ -201,11 +188,7 @@ export function FlexTabs() {
           </button>
         ))}
       </div>
-
-      {/* Tab Content */}
-      <div className="flex flex-1 overflow-auto">
-        {tabs.find((tab) => tab.id === activeTab)?.content}
-      </div>
+      <div className="flex flex-1 overflow-auto">{tabs.find((tab) => tab.id === activeTab)?.content}</div>
     </div>
   );
 }

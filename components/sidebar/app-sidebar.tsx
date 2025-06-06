@@ -41,13 +41,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">VoxRaven</span>
-                  <span className="truncate text-xs text-gray-500">Version v0.4.2-b.1</span>
+                  <span className="truncate text-xs text-gray-500">
+                    Version v0.4.2-b.1
+                  </span>
                 </div>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem className="pt-4">
-{/* 
             <Button
               size="default"
               variant="outline"
@@ -55,17 +56,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               onClick={handleNewProject}
             >
               New Project
-            </Button> */}
+            </Button>
 
-            <Button
+            {/* <Button
               size="default"
               variant="outline"
               className="w-full font-medium"
               onClick={handleNewVideo}
             >
               New Video
-            </Button>
-
+            </Button> */}
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>

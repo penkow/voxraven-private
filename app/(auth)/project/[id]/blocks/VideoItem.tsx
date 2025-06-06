@@ -1,18 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import Image from "next/image";
+import { useState } from "react";
 
-import InsightsItem from "./InsightsItem";
-import { InsightsDialog } from "./InsightsDialog";
+import { Prisma, Video } from "@prisma/client";
 
-import { Prisma } from "@prisma/client";
 export type VideoFullType = Prisma.VideoGetPayload<{
   select: { [K in keyof Required<Prisma.VideoSelect>]: true };
 }>;
 
-import { VideoHooksTimeline } from "./HooksTimeline";
 import VideoPlayer from "./VideoPlayer";
 const formatDate = (dateString: string) => {
   // Handle numeric format YYYYMMDD
@@ -37,7 +32,7 @@ const formatDate = (dateString: string) => {
 };
 
 interface VideoItemProps {
-  video: VideoFullType;
+  video: Video;
   onStartChat: (video: VideoFullType) => void;
 }
 
@@ -66,16 +61,6 @@ export default function VideoItem({ video, onStartChat }: VideoItemProps) {
     <div className="flex flex-col md:flex-row p-4 border rounded-md bg-background gap-4">
       <div className="flex flex-col items-center w-full  md:w-1/6">
         <div className="w-full">
-          {/* <a href={video.url} target="_blank" rel="noopener noreferrer">
-            <Image
-              src={video.thumbnails[video.thumbnails.length - 2]}
-              alt={video.title}
-              width={200}
-              height={100}
-              className="object-cover object-center rounded-md w-full h-full border border-gray-300"
-              sizes="(max-width: 768px) 100vw, 200px"
-            />
-          </a> */}
           <VideoPlayer
             videoId={extractYoutubeVideoId(video.url) || ""}
             currentTime={currentTime || 0}
@@ -116,7 +101,7 @@ export default function VideoItem({ video, onStartChat }: VideoItemProps) {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-4">
+        {/* <div className="flex flex-wrap gap-4">
           <div className="w-auto">
             <InsightsItem
               title="Summary"
@@ -144,9 +129,9 @@ export default function VideoItem({ video, onStartChat }: VideoItemProps) {
               content={video.videoInsights[0]?.empathyMap}
             />
           </div>
-        </div>
+        </div> */}
 
-        <div className="px-2">
+        {/* <div className="px-2">
           <VideoHooksTimeline
             hooks={
               video.videoInsights[0]?.hooks &&
@@ -158,25 +143,7 @@ export default function VideoItem({ video, onStartChat }: VideoItemProps) {
             jumpToSecond={jumpToTime}
             videoWatchProgress={videoWatchProgress}
           />
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-2 justify-start items-center">
-        <InsightsDialog
-          summary={video.videoInsights[0]?.summary}
-          targetAudience={video.videoInsights[0]?.targetAudience}
-          painPoints={video.videoInsights[0]?.painPoints}
-          empathyMap={video.videoInsights[0]?.empathyMap}
-          commentsAnalysis={video.videoInsights[0]?.commentsAnalysis}
-        />
-
-        <Button
-          onClick={() => onStartChat(video)}
-          size="sm"
-          className="h-6 w-24 px-2"
-        >
-          Chat
-        </Button>
+        </div> */}
       </div>
     </div>
   );
