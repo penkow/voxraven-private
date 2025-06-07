@@ -56,10 +56,10 @@ export default function VideoItem({ video }: VideoItemProps) {
             </p>
 
             {/* Channel Info */}
-            <div className="flex items-center gap-1 mb-1">
+            {/* <div className="flex items-center gap-1 mb-1">
               <span className="text-sm text-muted-foreground hover:text-foreground cursor-pointer">Tech Channel</span>
               <CheckCircle className="w-3 h-3 text-muted-foreground" />
-            </div>
+            </div> */}
 
             {/* Video Stats */}
             <div className="flex items-center gap-1 text-sm text-muted-foreground">

@@ -125,23 +125,25 @@ export default function VideoSelectionInterface() {
           </div>
         </div>
 
-        <div className="flex-1 w-full overflow-y-auto p-4 grid grid-cols-3 gap-4">
-          {project?.videos && project?.videos.length > 0 ? (
-            project?.videos.map((video) => <VideoItem key={video.id} video={video} />)
-          ) : (
-            <>
-              <div className="flex flex-col text-center text-muted-foreground mt-36">
-                <div>No videos added yet.</div>
-                <div className="mt-4">
-                  <Button type="submit" disabled={isAddingManual} onClick={() => setIsModalOpen(true)}>
-                    <Plus className="h-4 w-4" />
-                    Add Video
-                  </Button>
+        <ScrollArea className="h-full w-full">
+          <div className="flex-1 w-full overflow-y-auto p-4 grid grid-cols-3 gap-4">
+            {project?.videos && project?.videos.length > 0 ? (
+              project?.videos.map((video) => <VideoItem key={video.id} video={video} />)
+            ) : (
+              <>
+                <div className="flex flex-col text-center text-muted-foreground mt-36">
+                  <div>No videos added yet.</div>
+                  <div className="mt-4">
+                    <Button type="submit" disabled={isAddingManual} onClick={() => setIsModalOpen(true)}>
+                      <Plus className="h-4 w-4" />
+                      Add Video
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
-        </div>
+              </>
+            )}
+          </div>
+        </ScrollArea>
       </div>
     </>
   );
