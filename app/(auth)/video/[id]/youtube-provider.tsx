@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { Project } from "@prisma/client";
 
 import { io } from "socket.io-client";
+import { title } from "process";
 
 export interface TranscriptSegment {
   id: number;
@@ -31,6 +32,7 @@ interface VideoInfo {
 // Define the context value type
 const YoutubeProviderContext = createContext<{
   youtubeId: string;
+  title: string;
   description: string | null | undefined;
   summary: string | null | undefined;
   views: number | null | undefined;
@@ -42,6 +44,7 @@ const YoutubeProviderContext = createContext<{
   transcript: TranscriptSegment[] | null | undefined;
 }>({
   youtubeId: "",
+  title: "",
   description: null,
   summary: null,
   views: null,
@@ -158,6 +161,7 @@ export function YoutubeProvider({ children, videoId }: YoutubeProviderProps) {
   const contextValue = useMemo(
     () => ({
       youtubeId,
+      title,
       description,
       summary,
       views,
@@ -170,6 +174,7 @@ export function YoutubeProvider({ children, videoId }: YoutubeProviderProps) {
     }),
     [
       youtubeId,
+      title,
       description,
       summary,
       views,

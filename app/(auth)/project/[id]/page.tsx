@@ -5,13 +5,7 @@ import { Loader2, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import VideoItem from "./blocks/VideoItem";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useParams, useRouter } from "next/navigation";
 
 import { Project } from "@prisma/client";
@@ -30,15 +24,9 @@ export type ProjectFullType = Prisma.ProjectGetPayload<{
 export default function VideoSelectionInterface() {
   const { id } = useParams();
 
-  const PROJECT_ENDPOINT = new URL(
-    `api/projects/${id}`,
-    process.env.NEXT_PUBLIC_API_URL
-  );
+  const PROJECT_ENDPOINT = new URL(`api/projects/${id}`, process.env.NEXT_PUBLIC_API_URL);
 
-  const VIDEOS_ENDPOINT = new URL(
-    `api/videos`,
-    process.env.NEXT_PUBLIC_API_URL
-  );
+  const VIDEOS_ENDPOINT = new URL(`api/videos`, process.env.NEXT_PUBLIC_API_URL);
 
   // User Input
   const [videoUrl, setVideoUrl] = useState("");
@@ -90,9 +78,7 @@ export default function VideoSelectionInterface() {
     <>
       <div className="flex flex-col w-full h-[calc(100vh-1rem)]">
         <div className="flex justify-between items-center p-4 border-b border-slate-100">
-          <h2 className="text-2xl font-medium">
-            {project?.title || "Loading..."}
-          </h2>
+          <h2 className="text-2xl font-medium">{project?.title || "Loading..."}</h2>
           <div className="flex gap-2">
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
               <DialogTrigger asChild>
@@ -139,46 +125,23 @@ export default function VideoSelectionInterface() {
           </div>
         </div>
 
-        <div className="flex-1 w-full overflow-hidden">
-          <ScrollArea className="h-full w-full">
-            <div className="p-4">
-              <div className="space-y-4">
-                {project?.videos && project?.videos.length > 0 ? (
-                  project?.videos.map((video) => (
-                    <VideoItem
-                      key={video.id}
-                      video={video}
-                      onStartChat={() => {}}
-                    />
-                  ))
-                ) : (
-                  <>
-                    <div className="flex flex-col text-center text-muted-foreground mt-36">
-                      <div>No videos added yet.</div>
-                      <div className="mt-4">
-                        <Button
-                          type="submit"
-                          disabled={isAddingManual}
-                          onClick={() => setIsModalOpen(true)}
-                        >
-                          <Plus className="h-4 w-4" />
-                          Add Video
-                        </Button>
-                      </div>
-                    </div>
-                  </>
-                )}
+        <div className="flex-1 w-full overflow-y-auto p-4 grid grid-cols-3 gap-4">
+          {project?.videos && project?.videos.length > 0 ? (
+            project?.videos.map((video) => <VideoItem key={video.id} video={video} />)
+          ) : (
+            <>
+              <div className="flex flex-col text-center text-muted-foreground mt-36">
+                <div>No videos added yet.</div>
+                <div className="mt-4">
+                  <Button type="submit" disabled={isAddingManual} onClick={() => setIsModalOpen(true)}>
+                    <Plus className="h-4 w-4" />
+                    Add Video
+                  </Button>
+                </div>
               </div>
-            </div>
-          </ScrollArea>
+            </>
+          )}
         </div>
-
-        {/* Blue div - fixed height footer */}
-        {/* <div className="w-full h-[30px] min-h-[30px] bg-blue-100 border border-blue-300 flex items-center justify-center">
-          <span className="text-blue-800 font-medium text-xs">
-            Blue Footer (Fixed Height)
-          </span>
-        </div> */}
       </div>
     </>
   );

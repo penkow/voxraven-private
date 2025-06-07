@@ -197,13 +197,13 @@ export function Chat({
 
   return (
     <ChatContainer className={className}>
-      {isEmpty && append && suggestions ? (
+      {/* {isEmpty && append && suggestions ? (
         <PromptSuggestions
           label="Try these prompts ✨"
           append={append}
           suggestions={suggestions}
         />
-      ) : null}
+      ) : null} */}
 
       {messages.length > 0 ? (
         <ChatMessages messages={messages}>

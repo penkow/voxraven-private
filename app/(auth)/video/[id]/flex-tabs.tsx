@@ -13,13 +13,14 @@ const customComponents = {
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AlertTriangle, BarChart3, Box, FileText, MessageCircle, Users } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { useChat } from "@ai-sdk/react";
+import { Message, useChat } from "@ai-sdk/react";
 import { TranscriptSegment, useYouTube } from "./youtube-provider";
 import { motion } from "framer-motion";
+import { useParams } from "next/navigation";
 
 interface TabItem {
   id: string;
@@ -30,6 +31,7 @@ interface TabItem {
 
 export function FlexTabs() {
   const [activeTab, setActiveTab] = useState("chat");
+  const { id } = useParams();
 
   const {
     youtubeId,
@@ -50,16 +52,49 @@ export function FlexTabs() {
     api: AI_CHAT_API.toString(),
     credentials: "include",
     body: {
-      videoId: youtubeId,
+      videoId: id,
     },
   });
+
+  function animateInitialMessage(message: Message, setMessages: (msgs: Message[]) => void) {
+    const words = message.content.split(" ");
+    let current = "";
+    let index = 0;
+
+    function showNextWord() {
+      if (index < words.length) {
+        current += (index === 0 ? "" : " ") + words[index];
+        setMessages([{ ...message, content: current }]);
+        index++;
+        setTimeout(showNextWord, 20);
+      }
+    }
+
+    showNextWord();
+  }
+
+  useEffect(() => {
+    console.log("Setting initial messages for video chat", id);
+    const initialMessage: Message = {
+      id: "1",
+      role: "system",
+      content:
+        "Hi there! I am **VoxRaven AI**, your personal **experienced content analysis assistant**.\n\n" +
+        "I'm here to answer any questions about the video and its content!\n\n" +
+        "Feel free to **ask complex questions** that go **beyound what was said in the video**. " +
+        "I'm an expert in diverse fields, including self-improvement, marketing, sales, product management, and more.\n\n" +
+        "How can I assist you today?",
+    };
+    animateInitialMessage(initialMessage, setMessages);
+    //setMessages([initialMessage]);
+  }, [id, transcript]);
 
   const createChatTabItem = (transcript: TranscriptSegment[] | undefined | null) => {
     return transcript ? (
       <Chat
         messages={messages as any}
         handleSubmit={handleSubmit}
-        className="border border-slate-200 px-4 pb-4 rounded-lg overflow-auto"
+        className="border border-slate-200 px-4 pb-4 rounded-lg overflow-auto pt-2"
         input={input}
         handleInputChange={handleInputChange}
         isGenerating={status != "ready"}
