@@ -107,6 +107,7 @@ export function FlexTabs() {
   const createChatTabItem = (transcript: TranscriptSegment[] | undefined | null) => {
     return transcript ? (
       <Chat
+        videoId={id as string}
         messages={messages as any}
         handleSubmit={handleSubmit}
         className="border border-slate-200 px-4 pb-4 rounded-lg overflow-auto pt-2"

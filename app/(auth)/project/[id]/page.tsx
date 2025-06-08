@@ -57,6 +57,13 @@ export default function VideoSelectionInterface() {
     const video: VideoFullType = await response.json();
 
     console.log(video);
+    setProject((prevProject) => {
+      if (!prevProject) return null;
+      return {
+        ...prevProject,
+        videos: [...(prevProject.videos || []), video],
+      };
+    });
 
     setIsAddingManual(false);
     setIsModalOpen(false);

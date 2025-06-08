@@ -15,15 +15,18 @@ import { useCreateArtifact } from "./use-create-artifact";
 
 type ArtifactButtonProps = {
   content: string;
+  videoId: string;
   artifactMessage?: string;
 };
 
 export function ArtifactButton({
   content,
+  videoId,
   artifactMessage,
 }: ArtifactButtonProps) {
   const { isCreating, isAdded, handleCreateArtifact } = useCreateArtifact({
     text: content,
+    videoId: videoId,
     artifactMessage,
   });
 
