@@ -42,7 +42,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">VoxRaven</span>
                   <span className="truncate text-xs text-gray-500">
-                    Version v0.4.2-b.1
+                    Version v0.5.6-b.1
                   </span>
                 </div>
               </a>
